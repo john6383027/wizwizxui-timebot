@@ -1,6 +1,6 @@
 <?php
 
-include "baseInfo.php";
+include  "baseInfo.php";
 $connection = new mysqli('localhost',$dbUserName,$dbPassword,$dbName);
 if($connection->connect_error){
     exit("error " . $connection->connect_error);  

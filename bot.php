@@ -9379,7 +9379,6 @@ if($data == "managePanel" and (($from_id == $admin || $userInfo['isAdmin'] == tr
     $msg = "
 👤 عزیزم به بخش مدیریت خوشومدی 
 🤌 هرچی نیاز داشتی میتونی اینجا طبق نیازهات اضافه و تغییر بدی
-
 🚪 /start
 ";
     editText($message_id, $msg, getAdminKeys());

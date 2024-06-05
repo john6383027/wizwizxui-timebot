@@ -281,7 +281,7 @@ function showForm($type){
                     <input placeholder="لینک اتصال و یا هم uuid کانفیگ را وارد کنید" type="text"  id="id" name="id" autocomplete="off" required >
                 </fieldset>
                 <fieldset>
-                    <button class="search" type="submit">جستجو</button>
+                    <button class="search" type="submit">جستجو </button>
                 </fieldset>
             </form>
         </div>
