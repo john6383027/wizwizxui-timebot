@@ -358,7 +358,13 @@ wait
         echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/${RANDOM_CODE}/login.php\033[0m"
         
         echo " "
-        
+
+        echo "enter bot name : " botName
+
+        file_values_path="/var/www/html/${baseFolder}/${internalFolder}/settings/values.php"
+
+        sed -i "s/botNameHere/${botName}/g" "$file_values_path"
+
         echo -e "Good Luck Baby! \e[94mThis project is for free. If you like it, be sure to donate me :) , so let's go \033[0m\n"
 
         fi
