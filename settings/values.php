@@ -124,7 +124,7 @@ $mainValues = [
 ",
 
 
-    'please_wait_message'=>"⏳ | لطفا منتظرباشید",
+    'please_wait_message'=>"⏳ | لطفا منتظر باشید",
     'send_only_number'=> "❌ | لطفا فقط عدد ارسال کنید",
     'change_bot_settings_message'=>'👤هرکدوم از امکانات رو اگه تو ربات استفاده ای نداره ( خاموش ) کن !',
     'saved_successfuly'=>"✅|با موفقیت ذخیره شد",
