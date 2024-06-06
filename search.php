@@ -265,7 +265,7 @@ function showForm($type){
                 </div>
         <div class="container">
                     <p class="tarikh" style="font-size:14px;margin-top:10px">
-                       تاری: <span><?php echo $expiryTime;?></span>
+                       تاریخ انقضا: <span><?php echo $expiryTime;?></span>
                     </p>
                 </div>
             </form>
