@@ -97,8 +97,10 @@ sudo systemctl restart apache2.service
 
 wait
 
-echo -p "enter base folder name : " baseFolder
-echo -p "enter internal folder name : " internalFolder
+echo -p "enter base folder name : "
+read baseFolder
+echo -p "enter internal folder name : "
+read internalFolder
 
 git clone https://github.com/john6383027/wizwizxui-timebot.git /var/www/html/${internalFolder}/${baseFolder}
 sudo chown -R www-data:www-data /var/www/html/${internalFolder}/${baseFolder}
