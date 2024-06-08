@@ -102,9 +102,9 @@ read baseFolder
 echo -p "enter internal folder name : "
 read internalFolder
 
-git clone https://github.com/john6383027/wizwizxui-timebot.git /var/www/html/${internalFolder}/${baseFolder}
-sudo chown -R www-data:www-data /var/www/html/${internalFolder}/${baseFolder}
-sudo chmod -R 755 /var/www/html/${internalFolder}/${baseFolder}
+git clone https://github.com/john6383027/wizwizxui-timebot.git /var/www/html/${baseFolder}/${internalFolder}
+sudo chown -R www-data:www-data /var/www/html/${baseFolder}/${internalFolder}
+sudo chmod -R 755 /var/www/html/${baseFolder}/${internalFolder}
 echo -e "\n\033[33mWizWiz config and script have been installed successfully\033[0m"
 
 wait
