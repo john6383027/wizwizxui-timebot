@@ -345,6 +345,13 @@ wait
 	rm /var/www/html/${baseFolder}/${internalFolder}/wizwiz.sh
 	rm /var/www/html/${baseFolder}/${internalFolder}/tempCookie.txt
 	rm /var/www/html/${baseFolder}/${internalFolder}/settings/messagewizwiz.json
+
+	      echo  -e "enter bot name : "
+        read botName
+
+        file_values_path="/var/www/html/${baseFolder}/${internalFolder}/settings/values.php"
+
+        sed -i "s/botNameHere/${botName}/g" "${file_values_path}"
             
         clear
         
@@ -357,15 +364,9 @@ wait
         echo -e "\e[33mDatabase password: \e[36m${dbpass}\033[0m"
         echo " "
         echo -e "\e[100mwizwiz panel:\033[0m"
-        echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/${RANDOM_CODE}/login.php\033[0m"
+        echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/${baseFolder}/${RANDOM_CODE}/login.php\033[0m"
         
         echo " "
-
-        echo "enter bot name : " botName
-
-        file_values_path="/var/www/html/${baseFolder}/${internalFolder}/settings/values.php"
-
-        sed -i "s/botNameHere/${botName}/g" "$file_values_path"
 
         echo -e "Good Luck Baby! \e[94mThis project is for free. If you like it, be sure to donate me :) , so let's go \033[0m\n"
 
