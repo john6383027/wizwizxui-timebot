@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c43375f0-df05-4616-a2ea-03e716982503" name="PanelYar Agents server">
+        <fileTransfer rootFolder="/var/www/html/" accessType="SFTP" host="panel.datacamp.work" port="22" sshConfigId="632ed580-53b1-4e25-904a-618a4a7fe602" sshConfig="root@panel.datacamp.work:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
