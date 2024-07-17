@@ -47,6 +47,7 @@ do
 			bot_token=$(cat /var/www/html/$path/baseInfo.php | grep '$botToken' | cut -d"'" -f2)
 			bot_token2=$(cat /var/www/html/$path/baseInfo.php | grep '$botToken' | cut -d'"' -f2)
 			bot_url=$(cat /var/www/html/$path/baseInfo.php | grep '$botUrl' | cut -d'"' -d"'" -f2)
+			bot_name=$(cat /var/www/html/$path/baseInfo.php | grep '$botName' | cut -d"'" -f2)
 
 			filepath="/var/www/html/$path/baseInfo.php"
 			
