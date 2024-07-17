@@ -47,10 +47,13 @@ do
 			bot_token=$(cat /var/www/html/$path/baseInfo.php | grep '$botToken' | cut -d"'" -f2)
 			bot_token2=$(cat /var/www/html/$path/baseInfo.php | grep '$botToken' | cut -d'"' -f2)
 			bot_url=$(cat /var/www/html/$path/baseInfo.php | grep '$botUrl' | cut -d'"' -d"'" -f2)
+			bot_name=$(cat /var/www/html/$path/baseInfo.php) | grep '$botName' | cut -d'"' -d'"' -f2)
 			
 			filepath="/var/www/html/$path/baseInfo.php"
 			
 			bot_value=$(cat $filepath | grep '$admin =' | sed 's/.*= //' | sed 's/;//')
+
+			sed -i "s/botNameHere/$bot_name/g" values.php
 			
                         MESSAGE="🤖 WizWiz robot has been successfully updated! "$'\n\n'"🔻token: <code>${bot_token}</code>"$'\n'"🔻admin: <code>${bot_value}</code> "$'\n'"🔻phpmyadmin: <code>https://domain.com/phpmyadmin</code>"$'\n'"🔹db name: <code>${db_namewizwiz}</code>"$'\n'"🔹db username: <code>${db_userwizwiz}</code>"$'\n'"🔹db password: <code>${db_passwizwiz}</code>"$'\n\n'"📢 @wizwizch "
 			
@@ -137,7 +140,7 @@ do
 			filepath="/var/www/html/$path/baseInfo.php"
 			
 			bot_value=$(cat $filepath | grep '$admin =' | sed 's/.*= //' | sed 's/;//')
-			
+
 			MESSAGE="🕹 WizWiz panel has been successfully updated!"
 
 			curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" -d chat_id="${bot_value}" -d text="$MESSAGE"
