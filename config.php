@@ -5,16 +5,16 @@ include_once 'baseInfo.php';
 
 $connection = new mysqli('localhost',$dbUserName,$dbPassword,$dbName);
 if($connection->connect_error){
-    exit("error " . $connection->connect_error);  
+    exit("error " . $connection->connect_error);
 }
 $connection->set_charset("utf8mb4");
 
 function bot($method, $datas = []){
     global $botToken;
     $url = "https://api.telegram.org/bot" . $botToken . "/" . $method;
-    $ch = curl_init(); 
+    $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($datas));
     $res = curl_exec($ch);
     if (curl_error($ch)) {
@@ -38,7 +38,7 @@ function editKeys($keys = null, $msgId = null, $ci = null){
     global $from_id,$message_id;
     $ci = $ci??$from_id;
     $msgId = $msgId??$message_id;
-   
+
     bot('editMessageReplyMarkup',[
 		'chat_id' => $ci,
 		'message_id' => $msgId,
@@ -61,7 +61,7 @@ function delMessage($msg = null, $chat_id = null){
     global $from_id, $message_id;
     $msg = $msg??$message_id;
     $chat_id = $chat_id??$from_id;
-    
+
     return bot('deleteMessage',[
         'chat_id'=>$chat_id,
         'message_id'=>$msg
@@ -190,7 +190,7 @@ $stmt->execute();
 $uinfo = $stmt->get_result();
 $userInfo = $uinfo->fetch_assoc();
 $stmt->close();
- 
+
 $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'PAYMENT_KEYS'");
 $stmt->execute();
 $paymentKeys = $stmt->get_result()->fetch_assoc()['value'];
@@ -288,7 +288,7 @@ function getMainKeys(){
         while($row = $buttons->fetch_assoc()){
             $rowId = $row['id'];
             $title = str_replace("MAIN_BUTTONS","",$row['type']);
-            
+
             $temp[] =['text'=>$title,'callback_data'=>"showMainButtonAns" . $rowId];
             if(count($temp)>=2){
                 array_push($mainKeys,$temp);
@@ -298,7 +298,7 @@ function getMainKeys(){
     }
     array_push($mainKeys,$temp);
     if($from_id == $admin || $userInfo['isAdmin'] == true) array_push($mainKeys,[['text'=>"مدیریت ربات ⚙️",'callback_data'=>"managePanel"]]);
-    return json_encode(['inline_keyboard'=>$mainKeys]); 
+    return json_encode(['inline_keyboard'=>$mainKeys]);
 }
 function getAgentKeys(){
     global $buttonValues, $mainValues, $from_id, $userInfo, $connection;
@@ -309,7 +309,7 @@ function getAgentKeys(){
     $stmt->execute();
     $boughtAccounts = $stmt->get_result()->num_rows;
     $stmt->close();
-    
+
     return json_encode(['inline_keyboard'=>[
         [['text'=>$boughtAccounts,'callback_data'=>"wizwizch"],['text'=>$buttonValues['agent_bought_accounts'],'callback_data'=>"wizwizch"]],
         [['text'=>$joinedDate,'callback_data'=>"wizwizch"],['text'=>$buttonValues['agent_joined_date'],'callback_data'=>"wizwizch"]],
@@ -319,7 +319,7 @@ function getAgentKeys(){
 }
 function getAdminKeys(){
     global $buttonValues, $mainValues, $from_id, $admin;
-    
+
     return json_encode(['inline_keyboard'=>[
         [['text'=>$buttonValues['bot_reports'],'callback_data'=>"botReports"],['text'=>$buttonValues['message_to_user'],'callback_data'=>"messageToSpeceficUser"]],
         [['text'=>$buttonValues['user_reports'],'callback_data'=>"userReports"]],
@@ -341,13 +341,13 @@ function getAdminKeys(){
             ],
         [['text'=>$buttonValues['back_to_main'],'callback_data'=>"mainMenu"]],
     ]]);
-    
+
 }
 
 function setSettings($field, $value){
     global $connection, $botState;
     $botState[$field]= $value;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'BOT_STATES'");
     $stmt->execute();
     $isExists = $stmt->get_result();
@@ -355,7 +355,7 @@ function setSettings($field, $value){
     if($isExists->num_rows>0) $query = "UPDATE `setting` SET `value` = ? WHERE `type` = 'BOT_STATES'";
     else $query = "INSERT INTO `setting` (`type`, `value`) VALUES ('BOT_STATES', ?)";
     $newData = json_encode($botState);
-    
+
     $stmt = $connection->prepare($query);
     $stmt->bind_param("s", $newData);
     $stmt->execute();
@@ -363,21 +363,21 @@ function setSettings($field, $value){
 }
 function getRejectedAgentList(){
     global $connection, $mainValues, $buttonValues;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `is_agent` = 2");
     $stmt->execute();
     $list = $stmt->get_result();
     $stmt->close();
-    
+
     if($list->num_rows>0){
         $keys = array();
         $keys[] = [['text'=>"آزاد ساختن",'callback_data'=>"wizwizch"],['text'=>"اسم کاربر",'callback_data'=>'wizwizch'],['text'=>"آیدی عددی",'callback_data'=>"wizwizch"]];
         while($row = $list->fetch_assoc()){
             $userId = $row['userid'];
-            
+
             $userDetail = bot('getChat',['chat_id'=>$userId])->result;
             $fullName = $userDetail->first_name . " " . $userDetail->last_name;
-            
+
             $keys[] = [['text'=>"✅",'callback_data'=>"releaseRejectedAgent" . $userId],['text'=>$fullName,'callback_data'=>"wizwizch"],['text'=>$userId,'callback_data'=>"wizwizch"]];
         }
         $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]];
@@ -386,7 +386,7 @@ function getRejectedAgentList(){
 }
 function getAgentDetails($userId){
     global $connection, $mainVAlues, $buttonValues;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ? AND `is_agent` = 1");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -400,26 +400,26 @@ function getAgentDetails($userId){
     $lastMonth = strtotime("last month");
 
     $stmt = $connection->prepare("SELECT COUNT(`id`) AS `count`, SUM(`amount`) AS `total` FROM `orders_list` WHERE `date` >= ? AND `agent_bought` = 1 AND `userid` = ?");
-    
+
     $stmt->bind_param("ii", $today, $userId);
     $stmt->execute();
     $todayIncome = $stmt->get_result()->fetch_assoc();
-    
+
     $stmt->bind_param("ii", $yesterday, $userId);
     $stmt->execute();
     $yesterdayIncome = $stmt->get_result()->fetch_assoc();
-    
+
     $stmt->bind_param("ii", $lastWeek, $userId);
     $stmt->execute();
     $lastWeekIncome = $stmt->get_result()->fetch_assoc();
-    
+
     $stmt->bind_param("ii", $lastMonth, $userId);
     $stmt->execute();
     $lastMonthIncome = $stmt->get_result()->fetch_assoc();
-    
+
     $stmt->close();
-    
-    
+
+
     return json_encode(['inline_keyboard'=>[
         [
             ['text'=>"(" . $todayIncome['count'] . ") " . number_format($todayIncome['total']),'callback_data'=>'wizwizch'],
@@ -442,14 +442,14 @@ function getAgentDetails($userId){
 }
 function checkSpam(){
     global $connection, $from_id, $userInfo, $admin;
-    
+
     if($userInfo != null && $from_id != $admin){
         $spamInfo = json_decode($userInfo['spam_info'],true)??array();
         $spamDate = $spamInfo['date'];
         if(isset($spamInfo['banned'])){
             if(time() <= $spamInfo['banned']) return $spamInfo['banned'];
         }
-        
+
         if(time() <= $spamDate) $spamInfo['count'] += 1;
         else{
             $spamInfo['count'] = 1;
@@ -459,7 +459,7 @@ function checkSpam(){
             $spamInfo['banned'] = strtotime("+1 day");
         }
         $spamInfo = json_encode($spamInfo);
-        
+
         $stmt = $connection->prepare("UPDATE `users` SET `spam_info` = ? WHERE `userid` = ?");
         $stmt->bind_param("si", $spamInfo, $from_id);
         $stmt->execute();
@@ -469,21 +469,21 @@ function checkSpam(){
 function getAgentsList($offset = 0){
     global $connection, $mainValues, $buttonValues;
     $limit = 15;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `is_agent` = 1 LIMIT ? OFFSET ?");
     $stmt->bind_param('ii', $limit, $offset);
     $stmt->execute();
     $agentList = $stmt->get_result();
     $stmt->close();
-    
+
     $keys = array();
     if($agentList->num_rows == 0 && $offset == 0) return null;
-    
+
     $keys[] = [['text'=>"حذف",'callback_data'=>"wizwizch"],['text'=>"درصد تخفیف",'callback_data'=>"wizwizch"],['text'=>"تاریخ نمایندگی",'callback_data'=>"wizwizch"],['text'=>"اسم نماینده",'callback_data'=>"wizwizch"],['text'=>"آیدی عددی",'callback_data'=>"wizwizch"]];
     if($agentList->num_rows > 0){
         while($row = $agentList->fetch_assoc()){
             $userId = $row['userid'];
-            
+
             $userDetail = bot('getChat',['chat_id'=>$userId])->result;
             $userUserName = $userDetail->username;
             $fullName = $userDetail->first_name . " " . $userDetail->last_name;
@@ -505,27 +505,27 @@ function getAgentsList($offset = 0){
         $keys[] = [
             ['text'=>" «« صفحه قبلی ««",'callback_data'=>"nextAgentList" . ($offset - $limit)]
             ];
-            
+
     $keys[] = [['text' => $buttonValues['back_button'], 'callback_data' => "managePanel"]];
     return json_encode(['inline_keyboard'=>$keys]);
 }
 function getAgentDiscounts($agentId){
     global $connection, $mainValues, $buttonValues, $botState;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `is_agent` = 1 AND `userid` = ?");
     $stmt->bind_param("i", $agentId);
     $stmt->execute();
     $agentInfo = $stmt->get_result()->fetch_assoc();
     $stmt->close();
     $keys = array();
-    
+
     $discounts = json_decode($agentInfo['discount_percent'],true);
 
     $normal = $discounts['normal'];
     $keys[] = [['text'=>" ",'callback_data'=>"wizwizch"],
     ['text'=>$normal . "%",'callback_data'=>"editAgentDiscountNormal" . $agentId . "_0"],
-    ['text'=>"عمومی",'callback_data'=>"wizwizch"]];            
-    
+    ['text'=>"عمومی",'callback_data'=>"wizwizch"]];
+
     if($botState['agencyPlanDiscount']=="on"){
         foreach($discounts['plans'] as $planId=>$discount){
             $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ?");
@@ -533,16 +533,16 @@ function getAgentDiscounts($agentId){
             $stmt->execute();
             $info = $stmt->get_result()->fetch_assoc();
             $stmt->close();
-            
+
             $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `id` = ?");
             $stmt->bind_param("i", $info['catid']);
             $stmt->execute();
             $catInfo = $stmt->get_result()->fetch_assoc();
             $stmt->close();
-            
+
             $keys[] = [['text'=>"❌",'callback_data'=>"removePercentOfAgentPlan" . $agentId . "_" . $planId],
             ['text'=>$discount . "%",'callback_data'=>"editAgentDiscountPlan" . $agentId . "_" . $planId],
-            ['text'=>$info['title'] . " " . $catInfo['title'],'callback_data'=>"wizwizch"]];            
+            ['text'=>$info['title'] . " " . $catInfo['title'],'callback_data'=>"wizwizch"]];
         }
     }else{
         foreach($discounts['servers'] as $serverId=>$discount){
@@ -551,11 +551,11 @@ function getAgentDiscounts($agentId){
             $stmt->execute();
             $info = $stmt->get_result()->fetch_assoc();
             $stmt->close();
-            
+
             $keys[] = [['text'=>"❌",'callback_data'=>"removePercentOfAgentServer" . $agentId . "_" . $serverId],
             ['text'=>$discount . "%",'callback_data'=>"editAgentDiscountServer" . $agentId . "_" . $serverId],
-            ['text'=>$info['title'],'callback_data'=>"wizwizch"]];            
-        }                
+            ['text'=>$info['title'],'callback_data'=>"wizwizch"]];
+        }
     }
     if($botState['agencyPlanDiscount']=="on")$keys[] = [['text' => "افزودن تخفیف پلن", 'callback_data' => "addDiscountPlanAgent" . $agentId]];
     else $keys[] = [['text' => "افزودن تخفیف سرور", 'callback_data' => "addDiscountServerAgent" . $agentId]];
@@ -600,7 +600,7 @@ function NOWPayments($method, $endpoint, $datas = []){
     }
 
     $res = curl_exec($ch);
-    
+
     if(curl_error($ch)) var_dump(curl_error($ch));
     else return json_decode($res);
 }
@@ -611,7 +611,7 @@ function getServerConfigKeys($serverId,$offset = 0){
     $stmt->execute();
     $cats= $stmt->get_result();
     $stmt->close();
-    
+
     $cty = $cats->fetch_assoc();
     $id = $cty['id'];
     $cname = $cty['title'];
@@ -719,9 +719,9 @@ function getServerConfigKeys($serverId,$offset = 0){
 }
 function getServerListKeys($offset = 0){
     global $connection, $mainValues, $buttonValues;
-    
+
     $limit = 15;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `server_info` WHERE `active`=1 LIMIT ? OFFSET ?");
     $stmt->bind_param('ii', $limit, $offset);
     $stmt->execute();
@@ -745,7 +745,7 @@ function getServerListKeys($offset = 0){
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $serverTypeInfo= $stmt->get_result()->fetch_assoc();
-            $stmt->close(); 
+            $stmt->close();
             $portType = $serverTypeInfo['port_type']=="auto"?"خودکار":"تصادفی";
             $serverType = " ";
             switch ($serverTypeInfo['type']){
@@ -763,7 +763,7 @@ function getServerListKeys($offset = 0){
                     break;
             }
             $keys[] = [['text'=>$state,'callback_data'=>'toggleServerState' . $id . "_" . $offset],['text'=>"⚙️",'callback_data'=>"showServerSettings" . $id . "_" . $offset],['text'=>$serverType??" ",'callback_data'=>"wizwizch"],['text'=>$cname,'callback_data'=>"wizwizch"]];
-        } 
+        }
     }
     if($offset == 0 && $cats->num_rows >= $limit){
         $keys[] = [['text'=>" »» صفحه بعدی »»",'callback_data'=>"nextServerPage" . ($offset + $limit)]];
@@ -786,7 +786,7 @@ function getServerListKeys($offset = 0){
 }
 function getCategoriesKeys($offset = 0){
     $limit = 15;
-    
+
     global $connection, $mainValues, $buttonValues;
     $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `active`=1 AND `parent`=0 LIMIT ? OFFSET ?");
     $stmt->bind_param('ii', $limit, $offset);
@@ -806,7 +806,7 @@ function getCategoriesKeys($offset = 0){
             $keys[] = [['text'=>"❌",'callback_data'=>"wizwizcategorydelete$id" . "_" . $offset],['text'=>$cname,'callback_data'=>"wizwizcategoryedit$id" . "_" . $offset]];
         }
     }
-    
+
     if($offset == 0 && $cats->num_rows >= $limit){
         $keys[] = [['text'=>" »» صفحه بعدی »»",'callback_data'=>"nextCategoryPage" . ($offset + $limit)]];
     }
@@ -819,21 +819,21 @@ function getCategoriesKeys($offset = 0){
     elseif($offset != 0){
         $keys[] = [['text'=>" «« صفحه قبلی ««",'callback_data'=>"nextCategoryPage" . ($offset - $limit)]];
     }
-    
+
     $keys[] = [['text'=>'➕ افزودن دسته جدید','callback_data'=>"addNewCategory"]];
     $keys[] = [['text' => $buttonValues['back_button'], 'callback_data' => "managePanel"]];
     return json_encode(['inline_keyboard'=>$keys]);
 }
 function getGateWaysKeys(){
     global $connection, $mainValues, $buttonValues;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'BOT_STATES'");
     $stmt->execute();
     $botState = $stmt->get_result()->fetch_assoc()['value'];
     if(!is_null($botState)) $botState = json_decode($botState,true);
     else $botState = array();
     $stmt->close();
-    
+
     $cartToCartState = $botState['cartToCartState']=="on"?$buttonValues['on']:$buttonValues['off'];
     $walletState = $botState['walletState']=="on"?$buttonValues['on']:$buttonValues['off'];
     $sellState = $botState['sellState']=="on"?$buttonValues['on']:$buttonValues['off'];
@@ -924,7 +924,7 @@ function getGateWaysKeys(){
 }
 function getBotSettingKeys(){
     global $connection, $mainValues, $buttonValues;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'BOT_STATES'");
     $stmt->execute();
     $botState = $stmt->get_result()->fetch_assoc()['value'];
@@ -949,7 +949,7 @@ function getBotSettingKeys(){
     $agencyPlanDiscount = $botState['agencyPlanDiscount']=="on"?$buttonValues['plan_discount']:$buttonValues['server_discount'];
     $qrConfig = $botState['qrConfigState']=="on"?$buttonValues['on']:$buttonValues['off'];
     $qrSub = $botState['qrSubState']=="on"?$buttonValues['on']:$buttonValues['off'];
-    
+
     $requirePhone = $botState['requirePhone']=="on"?$buttonValues['on']:$buttonValues['off'];
     $requireIranPhone = $botState['requireIranPhone']=="on"?$buttonValues['on']:$buttonValues['off'];
     $sellState = $botState['sellState']=="on"?$buttonValues['on']:$buttonValues['off'];
@@ -968,7 +968,7 @@ function getBotSettingKeys(){
             $remarkType = "آیدی و عدد رندوم";
             break;
     }
-    
+
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` = 'PAYMENT_KEYS'");
     $stmt->execute();
     $paymentKeys = $stmt->get_result()->fetch_assoc()['value'];
@@ -1106,28 +1106,28 @@ function getBotReportKeys(){
     $stmt->execute();
     $allOrders = $stmt->get_result()->num_rows;
     $stmt->close();
-    
+
     $stmt = $connection->prepare("SELECT * FROM `server_config`");
     $stmt->execute();
     $allServers = $stmt->get_result()->num_rows;
     $stmt->close();
-    
+
     $stmt = $connection->prepare("SELECT * FROM `server_categories`");
     $stmt->execute();
     $allCategories = $stmt->get_result()->num_rows;
     $stmt->close();
-    
+
     $stmt = $connection->prepare("SELECT * FROM `server_plans`");
     $stmt->execute();
     $allPlans = $stmt->get_result()->num_rows;
     $stmt->close();
-    
+
     $stmt = $connection->prepare("SELECT SUM(price) as total FROM `pays` WHERE `state` = 'paid' OR `state` = 'approved'");
     $stmt->execute();
     $totalRewards = number_format($stmt->get_result()->fetch_assoc()['total']) . " تومان";
     $stmt->close();
-    
-    
+
+
     $persian = explode("-",jdate("Y-n-1", time()));
     $gregorian = jalali_to_gregorian($persian[0], $persian[1], $persian[2]);
     $date =  $gregorian[0] . "-" . $gregorian[1] . "-" . $gregorian[2];
@@ -1137,21 +1137,21 @@ function getBotReportKeys(){
     $stmt->execute();
     $monthReward = number_format($stmt->get_result()->fetch_assoc()['total']) . " تومان";
     $stmt->close();
-    
+
     $dayTime = strtotime("-" . (date("w")+1) . " days");
     $stmt = $connection->prepare("SELECT SUM(price) as total FROM `pays` WHERE `request_date` > ?  AND (`state` = 'paid' OR `state` = 'approved')");
     $stmt->bind_param("i", $dayTime);
     $stmt->execute();
     $weekReward = number_format($stmt->get_result()->fetch_assoc()['total']) . " تومان";
     $stmt->close();
-    
+
     $dayTime = strtotime("today");
     $stmt = $connection->prepare("SELECT SUM(price) as total FROM `pays` WHERE `request_date` > ? AND (`state` = 'paid' OR `state` = 'approved')");
     $stmt->bind_param("i", $dayTime);
     $stmt->execute();
     $dayReward = number_format($stmt->get_result()->fetch_assoc()['total']) . " تومان";
     $stmt->close();
-    
+
     return json_encode(['inline_keyboard'=>[
         [
             ['text'=>$allUsers,'callback_data'=>'wizwizch'],
@@ -1197,7 +1197,7 @@ function getBotReportKeys(){
 function getAdminsKeys(){
     global $connection, $mainValues, $buttonValues;
     $keys = array();
-    
+
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `isAdmin` = true");
     $stmt->execute();
     $usersList = $stmt->get_result();
@@ -1214,7 +1214,7 @@ function getAdminsKeys(){
     return json_encode(['inline_keyboard'=>$keys]);
 }
 function getUserInfoKeys($userId){
-    global $connection, $mainValues, $buttonValues; 
+    global $connection, $mainValues, $buttonValues;
     $stmt = $connection->prepare("SELECT * FROM `users` WHERE `userid` = ?");
     $stmt->bind_param("i",$userId);
     $stmt->execute();
@@ -1223,19 +1223,19 @@ function getUserInfoKeys($userId){
     if($userCount->num_rows > 0){
         $userInfos = $userCount->fetch_assoc();
         $userWallet = number_format($userInfos['wallet']) . " تومان";
-        
+
         $stmt = $connection->prepare("SELECT COUNT(amount) as count, SUM(amount) as total FROM `orders_list` WHERE `userid` = ?");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         $info = $stmt->get_result()->fetch_assoc();
-        
+
         $boughtService = $info['count'];
         $totalBoughtPrice = number_format($info['total']) . " تومان";
-        
+
         $userDetail = bot('getChat',['chat_id'=>$userId])->result;
         $userUserName = $userDetail->username;
         $fullName = $userDetail->first_name . " " . $userDetail->last_name;
-        
+
         return json_encode(['inline_keyboard'=>[
             [
                 ['text'=>$userUserName??" ",'url'=>"t.me/$userUserName"],
@@ -1281,25 +1281,25 @@ function getDiscountCodeKeys(){
             $hashId = $row['hash_id'];
             $rowId = $row['id'];
             $canUse = $row['can_use'];
-            
+
             $keys[] = [['text'=>'❌','callback_data'=>"delDiscount" . $rowId],['text'=>$canUse, 'callback_data'=>"wizwizch"],['text'=>$date,'callback_data'=>"wizwizch"],['text'=>$count,'callback_data'=>"wizwizch"],['text'=>$amount,'callback_data'=>"wizwizch"],['text'=>$hashId,'callback_data'=>'copyHash' . $hashId]];
         }
     }else{
         $keys[] = [['text'=>"کد تخفیفی یافت نشد",'callback_data'=>"wizwizch"]];
     }
-    
+
     $keys[] = [['text'=>"افزودن کد تخفیف",'callback_data'=>"addDiscountCode"]];
     $keys[] = [['text'=>$buttonValues['back_button'],'callback_data'=>"managePanel"]];
     return json_encode(['inline_keyboard'=>$keys]);
 }
 function getMainMenuButtonsKeys(){
     global $connection, $mainValues, $buttonValues;
-    
+
     $stmt = $connection->prepare("SELECT * FROM `setting` WHERE `type` LIKE '%MAIN_BUTTONS%'");
     $stmt->execute();
     $buttons = $stmt->get_result();
     $stmt->close();
-    
+
     $keys = array();
     if($buttons->num_rows > 0){
         while($row = $buttons->fetch_assoc()){
@@ -1397,7 +1397,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
     $stmt->execute();
     $order = $stmt->get_result();
     $stmt->close();
-    
+
 
     if($order->num_rows==0){
         return null;
@@ -1405,8 +1405,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
         $order = $order->fetch_assoc();
         $userId = $order['userid'];
         $firstName = bot('getChat',['chat_id'=>$userId])->result->first_name ?? " ";
-        $fid = $order['fileid']; 
-    	$stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=? AND `active`=1"); 
+        $fid = $order['fileid'];
+    	$stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=? AND `active`=1");
         $stmt->bind_param("i", $fid);
         $stmt->execute();
         $respd = $stmt->get_result();
@@ -1416,8 +1416,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
         $isAgentBought = $agentBought == true?"بله":"نخیر";
 
     	if($respd){
-    	    $respd = $respd->fetch_assoc(); 
-    	    
+    	    $respd = $respd->fetch_assoc();
+
     	    $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `id`=?");
             $stmt->bind_param("i", $respd['catid']);
             $stmt->execute();
@@ -1429,9 +1429,9 @@ function getUserOrderDetailKeys($id, $offset = 0){
     	        $catname = $cadquery->fetch_assoc()['title'];
         	    $name = $catname." ".$respd['title'];
     	    }else $name = "$id";
-        	
+
     	}else $name = "$id";
-    	
+
         $date = jdate("Y-m-d H:i",$order['date']);
         $expire_date = jdate("Y-m-d H:i",$order['expire_date']);
         $remark = $order['remark'];
@@ -1443,7 +1443,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
         $inbound_id = $order['inbound_id'];
         $link_status = $order['expire_date'] > time()  ? $buttonValues['active'] : $buttonValues['deactive'];
         $price = $order['amount'];
-        
+
     	$stmt = $connection->prepare("SELECT * FROM `server_config` WHERE `id` = ?");
     	$stmt->bind_param('i', $server_id);
     	$stmt->execute();
@@ -1457,7 +1457,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
             $enable = $info->status =="active"?true:false;
             $total = $info->data_limit;
             $usedTraffic = $info->used_traffic;
-            
+
             $leftgb = round( ($total - $usedTraffic) / 1073741824, 2) . " GB";
         }else{
             $response = getJson($server_id)->obj;
@@ -1468,7 +1468,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
                         $total = $row->total;
                         $up = $row->up;
                         $enable = $row->enable;
-                        $down = $row->down; 
+                        $down = $row->down;
                         $netType = json_decode($row->streamSettings)->network;
                         $security = json_decode($row->streamSettings)->security;
                         break;
@@ -1486,12 +1486,12 @@ function getUserOrderDetailKeys($id, $offset = 0){
                                 $email = $client->email;
                                 $emails = array_column($clientsStates,'email');
                                 $emailKey = array_search($email,$emails);
-                                
+
                                 $total = $clientsStates[$emailKey]->total;
                                 $up = $clientsStates[$emailKey]->up;
                                 $enable = $clientsStates[$emailKey]->enable;
                                 if(!$client->enable) $enable = false;
-                                $down = $clientsStates[$emailKey]->down; 
+                                $down = $clientsStates[$emailKey]->down;
                                 break;
                             }
                         }
@@ -1501,21 +1501,21 @@ function getUserOrderDetailKeys($id, $offset = 0){
             $leftgb = round( ($total - $up - $down) / 1073741824, 2) . " GB";
         }
         $configLinks = "";
-    
+
         $limit = 5;
         $count = 0;
         foreach($acc_link as $accLink){
             $count++;
             if($count <= $offset) continue;
             $configLinks .= ($botState['configLinkState'] != "off"?"\n <code>$accLink</code>":"");
-            
+
             if($count >= $offset + $limit) break;
         }
 
         $keyboard = array();
-        
+
         $configKeys = [];
-        
+
         if(count($acc_link) > $limit){
             if($offset == 0){
                 $configKeys = [
@@ -1527,7 +1527,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
                     ['text'=>"«",'callback_data'=>"userOrderDetails{$id}_" . ($offset + $limit)],
                     ['text'=>"»",'callback_data'=>"userOrderDetails{$id}_" . ($offset - $limit)]
                     ];
-                
+
             }
             elseif($offset != 0){
                 $configKeys = [
@@ -1535,7 +1535,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
                     ];
             }
         }
-    
+
         array_push($keyboard, $configKeys, [
     			    ['text' => $userId, 'callback_data' => "wizwizch"],
                     ['text' => "آیدی کاربر", 'callback_data' => "wizwizch"],
@@ -1567,11 +1567,11 @@ function getUserOrderDetailKeys($id, $offset = 0){
                 [
                     ['text' => $buttonValues['selected_protocol'], 'callback_data' => "wizwizch"],
                 ]);
-                
+
         if($inbound_id == 0){
             if($protocol == 'trojan') {
                 if($security == "xtls"){
-                    array_push($keyboard, 
+                    array_push($keyboard,
                         [
                             ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
                             ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
@@ -1581,9 +1581,9 @@ function getUserOrderDetailKeys($id, $offset = 0){
                             ['text'=>$buttonValues['delete_config'],'callback_data'=>"delUserConfig" . $order['id']],
                             ]
                     );
-                    
+
                 }else{
-                    array_push($keyboard, 
+                    array_push($keyboard,
                         [
                             ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
                             ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
@@ -1594,12 +1594,12 @@ function getUserOrderDetailKeys($id, $offset = 0){
                             ['text'=>$buttonValues['delete_config'],'callback_data'=>"delUserConfig" . $order['id']],
                             ]
                     );
-                    
-                    
+
+
                 }
             }else {
                 if($netType == "grpc"){
-                    array_push($keyboard, 
+                    array_push($keyboard,
                         [
                             ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
                             ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
@@ -1611,7 +1611,7 @@ function getUserOrderDetailKeys($id, $offset = 0){
                     );
                 }
                 elseif($netType == "tcp" && $security == "xtls"){
-                    array_push($keyboard, 
+                    array_push($keyboard,
                         [
                             ['text' => $protocol == 'trojan' ? '☑️ trojan' : 'trojan', 'callback_data' => "wizwizch"],
                             ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => "wizwizch"],
@@ -1621,10 +1621,10 @@ function getUserOrderDetailKeys($id, $offset = 0){
                             ['text'=>$buttonValues['delete_config'],'callback_data'=>"delUserConfig" . $order['id']],
                             ]
                     );
-                    
+
                 }
                 else{
-                    array_push($keyboard, 
+                    array_push($keyboard,
                         ($rahgozar == true?
                         [
                             ['text' => $protocol == 'vmess' ? '☑️ vmess' : 'vmess', 'callback_data' => "wizwizch"],
@@ -1640,11 +1640,11 @@ function getUserOrderDetailKeys($id, $offset = 0){
                             ['text'=>$buttonValues['delete_config'],'callback_data'=>"delUserConfig" . $order['id']],
                             ]
                     );
-                    
+
                 }
             }
         }else{
-            array_push($keyboard, 
+            array_push($keyboard,
                 [
                     ['text' => " $protocol ☑️", 'callback_data' => "wizwizch"],
                 ],
@@ -1652,8 +1652,8 @@ function getUserOrderDetailKeys($id, $offset = 0){
                     ['text'=>($enable == true?$buttonValues['disable_config']:$buttonValues['enable_config']),'callback_data'=>"changeUserConfigState" . $order['id']],
                     ['text'=>$buttonValues['delete_config'],'callback_data'=>"delUserConfig" . $order['id']],
                     ]
-                ); 
-            
+                );
+
 
         }
 
@@ -1663,14 +1663,14 @@ function getUserOrderDetailKeys($id, $offset = 0){
         $stmt->execute();
         $server_info = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-        
+
         if($serverType == "marzban") $subLink = $botState['subLinkState'] == "on"?"<code>" . $panelUrl . "/sub/" . $token . "</code>":"";
         else $subLink = $botState['subLinkState']=="on"?"<code>" . $botUrl . "settings/subLink.php?token=" . $token . "</code>":"";
 
-        
+
         $enable = $enable == true? $buttonValues['active']:$buttonValues['deactive'];
         $msg = str_replace(['STATE', 'NAME','CONNECT-LINK', 'SUB-LINK'], [$enable, $remark, $configLinks, $subLink], $mainValues['config_details_message']);
-    
+
         $keyboard[] = [['text' => $buttonValues['back_button'], 'callback_data' => "managePanel"]];
         return ["keyboard"=>json_encode([
                     'inline_keyboard' => $keyboard
@@ -1690,8 +1690,8 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
         return null;
     }else {
         $order = $order->fetch_assoc();
-        $fid = $order['fileid']; 
-    	$stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=? AND `active`=1"); 
+        $fid = $order['fileid'];
+    	$stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id`=? AND `active`=1");
         $stmt->bind_param("i", $fid);
         $stmt->execute();
         $respd = $stmt->get_result();
@@ -1700,8 +1700,8 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
         $agentBought = $order['agent_bought'];
 
     	if($respd){
-    	    $respd = $respd->fetch_assoc(); 
-    	    
+    	    $respd = $respd->fetch_assoc();
+
     	    $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `id`=?");
             $stmt->bind_param("i", $respd['catid']);
             $stmt->execute();
@@ -1713,9 +1713,9 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
     	        $catname = $cadquery->fetch_assoc()['title'];
         	    $name = $catname." ".$respd['title'];
     	    }else $name = "$id";
-        	
+
     	}else $name = "$id";
-    	
+
         $date = jdate("Y-m-d H:i",$order['date']);
         $expire_date = jdate("Y-m-d H:i",$order['expire_date']);
         $remark = $order['remark'];
@@ -1727,7 +1727,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
         $inbound_id = $order['inbound_id'];
         $link_status = $order['expire_date'] > time()  ? $buttonValues['active'] : $buttonValues['deactive'];
         $price = $order['amount'];
-        
+
     	$stmt = $connection->prepare("SELECT * FROM `server_config` WHERE `id` = ?");
     	$stmt->bind_param('i', $server_id);
     	$stmt->execute();
@@ -1735,7 +1735,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
     	$stmt->close();
     	$serverType = $serverConfig['type'];
         $panel_url = $serverConfig['panel_url'];
-        
+
         $found = false;
 
         if($serverType == "marzban"){
@@ -1745,7 +1745,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                 $enable = $info->status =="active"?true:false;
                 $total = $info->data_limit;
                 $usedTraffic = $info->used_traffic;
-                
+
                 $leftgb = round( ($total - $usedTraffic) / 1073741824, 2) . " GB";
             } else $leftgb = "⚠️";
         }else{
@@ -1758,30 +1758,30 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                             $found = true;
                             $total = $row->total;
                             $up = $row->up;
-                            $down = $row->down; 
+                            $down = $row->down;
                             $enable = $row->enable;
                             $expiryTime = $row->expiryTime;
-                            
+
                             $netType = json_decode($row->streamSettings)->network;
                             $security = json_decode($row->streamSettings)->security;
-                            
+
                             $clientsStates = $row->clientStats;
-                            
+
                             $inboundEmail = $clients[0]->email;
                             $allEmails = array_column($clientsStates,'email');
                             $clienEmailKey = array_search($inboundEmail,$allEmails);
-    
+
                             $clientTotal = $clientsStates[$clienEmailKey]->total;
                             $clientUp = $clientsStates[$clienEmailKey]->up;
                             $clientDown = $clientsStates[$clienEmailKey]->down;
                             $clientExpiryTime = $clientsStates[$clienEmailKey]->expiryTime;
-                                
+
                             if($clientTotal != 0 && $clientTotal != null && $clientExpiryTime != 0 && $clientExpiryTime != null){
                                 $up += $clientUp;
                                 $down += $clientDown;
                                 $total = $clientTotal;
                             }
-    
+
                             break;
                         }
                     }
@@ -1790,7 +1790,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                         if($row->id == $inbound_id) {
                             $netType = json_decode($row->streamSettings)->network;
                             $security = json_decode($row->streamSettings)->security;
-                            
+
                             $clientsStates = $row->clientStats;
                             $clients = json_decode($row->settings)->clients;
                             foreach($clients as $key => $client){
@@ -1799,12 +1799,12 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                     $email = $client->email;
                                     $emails = array_column($clientsStates,'email');
                                     $emailKey = array_search($email,$emails);
-                                    
+
                                     $total = $clientsStates[$emailKey]->total;
                                     $up = $clientsStates[$emailKey]->up;
                                     $enable = $clientsStates[$emailKey]->enable;
                                     if(!$client->enable) $enable = false;
-                                    $down = $clientsStates[$emailKey]->down; 
+                                    $down = $clientsStates[$emailKey]->down;
                                     break;
                                 }
                             }
@@ -1815,20 +1815,20 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
             }else $leftgb = "⚠️";
         }
         $configLinks = "";
-        
+
         $limit = 5;
         $count = 0;
         foreach($acc_link as $accLink){
             $count++;
             if($count <= $offset) continue;
             $configLinks .= ($botState['configLinkState'] != "off"?"\n <code>$accLink</code>":"");
-            
+
             if($count >= $offset + $limit) break;
         }
         $keyboard = array();
-        
+
         $configKeys = [];
-        
+
         if(count($acc_link) > $limit){
             if($offset == 0){
                 $configKeys = [
@@ -1840,7 +1840,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                     ['text'=>"«",'callback_data'=>"orderDetails{$id}_" . ($offset + $limit)],
                     ['text'=>"»",'callback_data'=>"orderDetails{$id}_" . ($offset - $limit)]
                     ];
-                
+
             }
             elseif($offset != 0){
                 $configKeys = [
@@ -1848,7 +1848,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                     ];
             }
         }
-        
+
         array_push($keyboard,$configKeys, [
 			    ['text' => $name, 'callback_data' => "wizwizch"],
                 ['text' => $buttonValues['plan_name'], 'callback_data' => "wizwizch"],
@@ -1879,7 +1879,7 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                 ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => ($botState['changeProtocolState']=="on"?"changeAccProtocol{$fid}_{$id}_vless":"changeProtocolIsDisable")],
                             ]);
                         }
-                        
+
                         $temp = array();
                         if($price != 0 && $agentBought == true){
                             if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
@@ -1894,8 +1894,8 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                 ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => ($botState['changeProtocolState']=="on"?"changeAccProtocol{$fid}_{$id}_vless":"changeProtocolIsDisable")],
                             ]);
                         }
-                        
-                        
+
+
                         $temp = array();
                         if($price != 0 || $agentBought == true){
                             if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
@@ -1911,8 +1911,8 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                     ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => ($botState['changeProtocolState']=="on"?"changeAccProtocol{$fid}_{$id}_vless":"changeProtocolIsDisable")],
                                 ]);
                         }
-                        
-                        
+
+
                         $temp = array();
                         if($price != 0 || $agentBought == true){
                             if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
@@ -1927,14 +1927,14 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                     ['text' => $protocol == 'vless' ? '☑️ vless' : 'vless', 'callback_data' => ($botState['changeProtocolState']=="on"?"changeAccProtocol{$fid}_{$id}_vless":"changeProtocolIsDisable")],
                             ]);
                         }
-                        
+
                         $temp = array();
                         if($price != 0 || $agentBought == true){
                             if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
                             if($botState['switchLocationState']=="on") $temp[] = ['text' => $buttonValues['change_config_location'], 'callback_data' => "switchLocation{$id}_{$server_id}_{$leftgb}_".$order['expire_date'] ];
                         }
                         if(count($temp)>0) array_push($keyboard, $temp);
-    
+
                     }
                     else{
                         if($serverType != "marzban"){
@@ -1952,14 +1952,14 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                                 )
                             );
                         }
-                        
+
                         $temp = array();
                         if($price != 0 || $agentBought == true){
                             if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
                             if($botState['switchLocationState']=="on" && $rahgozar != true) $temp[] = ['text' => $buttonValues['change_config_location'], 'callback_data' => "switchLocation{$id}_{$server_id}_{$leftgb}_".$order['expire_date'] ];
                         }
                         if(count($temp)>0) array_push($keyboard, $temp);
-    
+
                     }
                 }
             }else{
@@ -1968,14 +1968,14 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
                             ['text' => " $protocol ☑️", 'callback_data' => "wizwizch"],
                         ]);
                 }
-                
+
                 $temp = array();
                 if($price != 0 || $agentBought == true){
                     if($botState['renewAccountState']=="on") $temp[] = ['text' => $buttonValues['renew_config'], 'callback_data' => "renewAccount$id" ];
                     if($botState['switchLocationState']=="on" && $rahgozar != true) $temp[] = ['text' => $buttonValues['change_config_location'], 'callback_data' => "switchLocation{$id}_{$server_id}_{$leftgb}_".$order['expire_date'] ];
                 }
                 if(count($temp)>0) array_push($keyboard, $temp);
-    
+
             }
             $enable = $enable == true? $buttonValues['active']:$buttonValues['deactive'];
         }else $enable = $mainValues['config_doesnt_exist'];
@@ -1986,29 +1986,29 @@ function getOrderDetailKeys($from_id, $id, $offset = 0){
         $stmt->execute();
         $server_info = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-        
+
         if($serverType == "marzban") $subLink = $botState['subLinkState'] == "on"?"<code>" . $panel_url . "/sub/" . $token . "</code>":"";
         else $subLink = $botState['subLinkState']=="on"?"<code>" . $botUrl . "settings/subLink.php?token=" . $token . "</code>":"";
 
         $msg = str_replace(['STATE', 'NAME','CONNECT-LINK', 'SUB-LINK'], [$enable, $remark, $configLinks, $subLink], $mainValues['config_details_message']);
-        
-        
+
+
         if($found){
             $extrakey = [];
             if($botState['increaseVolumeState']=="on" && ($price != 0 || $agentBought == true)) $extrakey[] = ['text' => $buttonValues['increase_config_volume'], 'callback_data' => "increaseAVolume{$id}"];
             if($botState['increaseTimeState']=="on" && ($price != 0 || $agentBought == true)) $extrakey[] = ['text' => $buttonValues['increase_config_days'], 'callback_data' => "increaseADay{$id}"];
             $keyboard[] = $extrakey;
-            
-             
+
+
             if($botState['renewConfigLinkState'] == "on" && $botState['updateConfigLinkState'] == "on") $keyboard[] = [['text'=>$buttonValues['renew_connection_link'],'callback_data'=>'changAccountConnectionLink' . $id],['text'=>$buttonValues['update_config_connection'],'callback_data'=>'updateConfigConnectionLink' . $id]];
             elseif($botState['renewConfigLinkState'] == "on") $keyboard[] = [['text'=>$buttonValues['renew_connection_link'],'callback_data'=>'changAccountConnectionLink' . $id]];
             elseif($botState['updateConfigLinkState'] == "on") $keyboard[] = [['text'=>$buttonValues['update_config_connection'],'callback_data'=>'updateConfigConnectionLink' . $id]];
-            
+
             $temp = [];
             if($botState['qrConfigState'] == "on") $temp[] = ['text'=>$buttonValues['qr_config'],'callback_data'=>"showQrConfig" . $id];
             if($botState['qrSubState'] == "on") $temp[] = ['text'=>$buttonValues['qr_sub'],'callback_data'=>"showQrSub" . $id];
             array_push($keyboard, $temp);
-            
+
         }
         $keyboard[] = [['text' => $buttonValues['delete_config'], 'callback_data' => "deleteMyConfig" . $id]];
 
@@ -2024,7 +2024,7 @@ function RandomString($count = 9, $type = "all") {
     if($type == "all") $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789';
     elseif($type == "small") $characters = 'abcdef123456789';
     elseif($type == "domain") $characters = 'abcdefghijklmnopqrstuvwxyz';
-    
+
     $randstring = null;
     for ($i = 0; $i < $count; $i++) {
         $randstring .= $characters[
@@ -2053,14 +2053,14 @@ function generateUID(){
 }
 function checkStep($table){
     global $connection;
-    
+
     if($table == "server_plans") $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `active` = 0");
     if($table == "server_categories") $stmt = $connection->prepare("SELECT * FROM `server_categories` WHERE `active` = 0");
-    
+
     $stmt->execute();
     $res = $stmt->get_result()->fetch_assoc();
     $stmt->close();
-    return $res['step']; 
+    return $res['step'];
 }
 function setUser($value = 'none', $field = 'step'){
     global $connection, $from_id, $username, $first_name;
@@ -2071,7 +2071,7 @@ function setUser($value = 'none', $field = 'step'){
     $uinfo = $stmt->get_result();
     $stmt->close();
 
-    
+
     if($uinfo->num_rows == 0){
         $stmt = $connection->prepare("INSERT INTO `users` (`userid`, `name`, `username`, `refcode`, `wallet`, `date`)
                             VALUES (?,?,?, 0,0,?)");
@@ -2080,7 +2080,7 @@ function setUser($value = 'none', $field = 'step'){
         $stmt->execute();
         $stmt->close();
     }
-    
+
     if($field == "wallet") $stmt = $connection->prepare("UPDATE `users` SET `wallet` = ? WHERE `userid` = ?");
     elseif($field == "phone") $stmt = $connection->prepare("UPDATE `users` SET `phone` = ? WHERE `userid` = ?");
     elseif($field == "refered_by") $stmt = $connection->prepare("UPDATE `users` SET `refered_by` = ? WHERE `userid` = ?");
@@ -2093,7 +2093,7 @@ function setUser($value = 'none', $field = 'step'){
     elseif($field == "discount_percent") $stmt = $connection->prepare("UPDATE `users` SET `discount_percent` = ? WHERE `userid` = ?");
     elseif($field == "agent_date") $stmt = $connection->prepare("UPDATE `users` SET `agent_date` = ? WHERE `userid` = ?");
     elseif($field == "spam_info") $stmt = $connection->prepare("UPDATE `users` SET `spam_info` = ? WHERE `userid` = ?");
-    
+
     $stmt->bind_param("si", $value, $from_id);
     $stmt->execute();
     $stmt->close();
@@ -2117,7 +2117,7 @@ function addBorderImage($add){
 function sumerize($amount){
     $gb = $amount / (1024 * 1024 * 1024);
     if($gb > 1){
-      return round($gb,2) . " گیگابایت"; 
+      return round($gb,2) . " گیگابایت";
     }
     else{
         $gb *= 1024;
@@ -2157,11 +2157,11 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
                     $email = $client->email;
                     $emails = array_column($clientsStates,'email');
                     $emailKey = array_search($email,$emails);
-                    
+
                     $total = $clientsStates[$emailKey]->total;
                     $up = $clientsStates[$emailKey]->up;
                     $enable = $clientsStates[$emailKey]->enable;
-                    $down = $clientsStates[$emailKey]->down; 
+                    $down = $clientsStates[$emailKey]->down;
                     break;
                 }
             }
@@ -2169,7 +2169,7 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
     }
     $settings->clients = $clients;
     $settings = json_encode($settings);
-	
+
     if($delete == 1){
         $dataArr = array('up' => $row->up,'down' => $row->down,'total' => $row->total,'remark' => $row->remark,'enable' => 'true',
         'expiryTime' => $row->expiryTime, 'listen' => '','port' => $row->port,'protocol' => $row->protocol,'settings' => $settings,
@@ -2177,25 +2177,25 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
 
         $serverName = $server_info['username'];
         $serverPass = $server_info['password'];
-        
+
         $loginUrl = $panel_url . '/login';
-        
+
         $postFields = array(
             "username" => $serverName,
             "password" => $serverPass
             );
-            
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $loginUrl);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+        curl_setopt($curl, CURLOPT_TIMEOUT, 3);
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
         curl_setopt($curl, CURLOPT_HEADER, 1);
         $response = curl_exec($curl);
-        
+
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
@@ -2205,14 +2205,14 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
             parse_str($item, $cookie);
             $cookies = array_merge($cookies, $cookie);
         }
-        
+
         $loginResponse = json_decode($body,true);
-        
+
         if(!$loginResponse['success']){
             curl_close($curl);
             return $loginResponse;
         }
-        
+
         if($serverType == "sanaei" || $serverType == "alireza"){
             if($serverType == "sanaei") $url = "$panel_url/panel/inbound/" . $inbound_id . "/delClient/" . rawurlencode($uuid);
             elseif($serverType == "alireza") $url = "$panel_url/xui/inbound/" . $inbound_id . "/delClient/" . rawurlencode($uuid);
@@ -2246,7 +2246,7 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
-                CURLOPT_CONNECTTIMEOUT => 15,  
+                CURLOPT_CONNECTTIMEOUT => 15,
                 CURLOPT_TIMEOUT => 15,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
@@ -2263,10 +2263,10 @@ function deleteClient($server_id, $inbound_id, $uuid, $delete = 0){
                 )
             ));
         }
-        
+
         $response = curl_exec($curl);
         curl_close($curl);
-    }	
+    }
     return ['id' => $old_data->id,'expiryTime' => $old_data->expiryTime, 'limitIp' => $old_data->limitIp, 'flow' => $old_data->flow, 'total' => $total, 'up' => $up, 'down' => $down,];
 
 }
@@ -2306,21 +2306,21 @@ function editInboundRemark($server_id, $uuid, $newRemark){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -2334,7 +2334,7 @@ function editInboundRemark($server_id, $uuid, $newRemark){
         parse_str($item, $cookie);
         $cookies = array_merge($cookies, $cookie);
     }
-    
+
     $loginResponse = json_decode($body,true);
     if(!$loginResponse['success']){
         curl_close($curl);
@@ -2394,7 +2394,7 @@ function editInboundTraffic($server_id, $uuid, $volume, $days, $editType = null)
             $expiryTime = $row->expiryTime;
             $port = $row->port;
             $netType = json_decode($row->streamSettings)->network;
-            
+
             $email = $clients[0]->email;
 
             break;
@@ -2428,25 +2428,25 @@ function editInboundTraffic($server_id, $uuid, $volume, $days, $editType = null)
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
-    
+
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $header = substr($response, 0, $header_size);
     $body = substr($response, $header_size);
@@ -2517,7 +2517,7 @@ function changeInboundState($server_id, $uuid){
             break;
         }
     }
-    
+
     if(!isset($settings['clients'][0]['subId']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][0]['subId'] = RandomString(16);
     if(!isset($settings['clients'][0]['enable']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][0]['enable'] = true;
 
@@ -2526,7 +2526,7 @@ function changeInboundState($server_id, $uuid){
     $settings = json_encode($settings,488);
 
     $newEnable = $enable == true?false:true;
-    
+
     $dataArr = array('up' => $row->up,'down' => $row->down,'total' => $row->total,'remark' => $row->remark,'enable' => $newEnable,
         'expiryTime' => $row->expiryTime, 'listen' => '','port' => $row->port,'protocol' => $row->protocol,'settings' => $settings,
         'streamSettings' => $row->streamSettings, 'sniffing' => $row->sniffing);
@@ -2534,25 +2534,25 @@ function changeInboundState($server_id, $uuid){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
-    
+
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $header = substr($response, 0, $header_size);
     $body = substr($response, $header_size);
@@ -2632,8 +2632,8 @@ function renewInboundUuid($server_id, $uuid){
             break;
         }
     }
-    
-    $newUuid = generateRandomString(42,$protocol); 
+
+    $newUuid = generateRandomString(42,$protocol);
     if($protocol == "trojan") $settings['clients'][0]['password'] = $newUuid;
     else $settings['clients'][0]['id'] = $newUuid;
     if(!isset($settings['clients'][0]['subId']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][0]['subId'] = RandomString(16);
@@ -2651,21 +2651,21 @@ function renewInboundUuid($server_id, $uuid){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -2737,7 +2737,7 @@ function changeClientState($server_id, $inbound_id, $uuid){
         if($row->id == $inbound_id) {
             $settings = json_decode($row->settings, true);
             $clients = $settings['clients'];
-            
+
             foreach($clients as $key => $client){
                 if($client['id'] == $uuid || $client['password'] == $uuid){
                     $client_key = $key;
@@ -2748,7 +2748,7 @@ function changeClientState($server_id, $inbound_id, $uuid){
         }
     }
     if($client_key == -1) return null;
-    
+
     if(!isset($settings['clients'][$client_key]['subId']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][$client_key]['subId'] = RandomString(16);
     $settings['clients'][$client_key]['enable'] = $enable == true?false:true;
 
@@ -2761,21 +2761,21 @@ function changeClientState($server_id, $inbound_id, $uuid){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -2797,7 +2797,7 @@ function changeClientState($server_id, $inbound_id, $uuid){
     }
 
     if($serverType == "sanaei" || $serverType == "alireza"){
-        
+
         $newSetting = array();
         $newSetting['clients'][] = $editedClient;
         $newSetting = json_encode($newSetting);
@@ -2806,10 +2806,10 @@ function changeClientState($server_id, $inbound_id, $uuid){
             "id"=>$inbound_id,
             "settings" => $newSetting
             );
-            
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/updateClient/" . rawurlencode($uuid);
         else $url = "$panel_url/xui/inbound/updateClient/" . rawurlencode($uuid);
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -2881,7 +2881,7 @@ function renewClientUuid($server_id, $inbound_id, $uuid){
         if($row->id == $inbound_id) {
             $settings = json_decode($row->settings, true);
             $clients = $settings['clients'];
-            
+
             foreach($clients as $key => $client){
                 if($client['id'] == $uuid || $client['password'] == $uuid){
                     $protocol = $row->protocol;
@@ -2892,8 +2892,8 @@ function renewClientUuid($server_id, $inbound_id, $uuid){
         }
     }
     if($client_key == -1) return null;
-    
-    $newUuid = generateRandomString(42,$protocol); 
+
+    $newUuid = generateRandomString(42,$protocol);
     if($protocol == "trojan") $settings['clients'][$client_key]['password'] = $newUuid;
     else $settings['clients'][$client_key]['id'] = $newUuid;
     if(!isset($settings['clients'][$client_key]['subId']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][$client_key]['subId'] = RandomString(16);
@@ -2908,21 +2908,21 @@ function renewClientUuid($server_id, $inbound_id, $uuid){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -2944,7 +2944,7 @@ function renewClientUuid($server_id, $inbound_id, $uuid){
     }
 
     if($serverType == "sanaei" || $serverType == "alireza"){
-        
+
         $newSetting = array();
         $newSetting['clients'][] = $editedClient;
         $newSetting = json_encode($newSetting);
@@ -2953,10 +2953,10 @@ function renewClientUuid($server_id, $inbound_id, $uuid){
             "id"=>$inbound_id,
             "settings" => $newSetting
             );
-            
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/updateClient/" . rawurlencode($uuid);
         else $url = "$panel_url/xui/inbound/updateClient/" . rawurlencode($uuid);
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -3030,7 +3030,7 @@ function editClientRemark($server_id, $inbound_id, $uuid, $newRemark){
         if($row->id == $inbound_id) {
             $settings = json_decode($row->settings, true);
             $clients = $settings['clients'];
-            
+
             $clientsStates = $row->clientStats;
             foreach($clients as $key => $client){
                 if($client['id'] == $uuid || $client['password'] == $uuid){
@@ -3038,11 +3038,11 @@ function editClientRemark($server_id, $inbound_id, $uuid, $newRemark){
                     $email = $client['email'];
                     $emails = array_column($clientsStates,'email');
                     $emailKey = array_search($email,$emails);
-                    
+
                     $total = $clientsStates[$emailKey]->total;
                     $up = $clientsStates[$emailKey]->up;
                     $enable = $clientsStates[$emailKey]->enable;
-                    $down = $clientsStates[$emailKey]->down; 
+                    $down = $clientsStates[$emailKey]->down;
                     break;
                 }
             }
@@ -3061,21 +3061,21 @@ function editClientRemark($server_id, $inbound_id, $uuid, $newRemark){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-         
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -3093,11 +3093,11 @@ function editClientRemark($server_id, $inbound_id, $uuid, $newRemark){
     $loginResponse = json_decode($body,true);
     if(!$loginResponse['success']){
         curl_close($curl);
-        return $loginResponse; 
-    } 
+        return $loginResponse;
+    }
 
     if($serverType == "sanaei" || $serverType == "alireza"){
-        
+
         $newSetting = array();
         $newSetting['clients'][] = $editedClient;
         $newSetting = json_encode($newSetting);
@@ -3106,10 +3106,10 @@ function editClientRemark($server_id, $inbound_id, $uuid, $newRemark){
             "id"=>$inbound_id,
             "settings" => $newSetting
             );
-            
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/updateClient/" . rawurlencode($uuid);
         else $url = "$panel_url/xui/inbound/updateClient/" . rawurlencode($uuid);
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -3180,7 +3180,7 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
         if($row->id == $inbound_id) {
             $settings = json_decode($row->settings, true);
             $clients = $settings['clients'];
-            
+
             $clientsStates = $row->clientStats;
             foreach($clients as $key => $client){
                 if($client['id'] == $uuid || $client['password'] == $uuid){
@@ -3188,11 +3188,11 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
                     $email = $client['email'];
                     $emails = array_column($clientsStates,'email');
                     $emailKey = array_search($email,$emails);
-                    
+
                     $total = $clientsStates[$emailKey]->total;
                     $up = $clientsStates[$emailKey]->up;
                     $enable = $clientsStates[$emailKey]->enable;
-                    $down = $clientsStates[$emailKey]->down; 
+                    $down = $clientsStates[$emailKey]->down;
                     break;
                 }
             }
@@ -3211,7 +3211,7 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
         if(!isset($settings['clients'][$client_key]['subId']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][$client_key]['subId'] = RandomString(16);
         if(!isset($settings['clients'][$client_key]['enable']) && ($serverType == "sanaei" || $serverType == "alireza")) $settings['clients'][$client_key]['enable'] = true;
     }
-    
+
     if($days != 0){
         $expiryTime = $settings['clients'][$client_key]['expiryTime'];
         $now_microdate = floor(microtime(true) * 1000);
@@ -3231,25 +3231,25 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-         
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
-    
+
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $header = substr($response, 0, $header_size);
     $body = substr($response, $header_size);
@@ -3263,11 +3263,11 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
     $loginResponse = json_decode($body,true);
     if(!$loginResponse['success']){
         curl_close($curl);
-        return $loginResponse; 
-    } 
+        return $loginResponse;
+    }
 
     if($serverType == "sanaei" || $serverType == "alireza"){
-        
+
         $newSetting = array();
         $newSetting['clients'][] = $editedClient;
         $newSetting = json_encode($newSetting);
@@ -3276,10 +3276,10 @@ function editClientTraffic($server_id, $inbound_id, $uuid, $volume, $days, $edit
             "id"=>$inbound_id,
             "settings" => $newSetting
             );
-            
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/updateClient/" . rawurlencode($uuid);
         else $url = "$panel_url/xui/inbound/updateClient/" . rawurlencode($uuid);
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -3371,21 +3371,21 @@ function deleteInbound($server_id, $uuid, $delete = 0){
     if($delete == 1){
         $serverName = $server_info['username'];
         $serverPass = $server_info['password'];
-        
+
         $loginUrl = $panel_url . '/login';
-        
+
         $postFields = array(
             "username" => $serverName,
             "password" => $serverPass
             );
-            
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $loginUrl);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+        curl_setopt($curl, CURLOPT_TIMEOUT, 3);
         curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
         curl_setopt($curl, CURLOPT_HEADER, 1);
         $response = curl_exec($curl);
@@ -3405,10 +3405,10 @@ function deleteInbound($server_id, $uuid, $delete = 0){
             curl_close($curl);
             return $loginResponse;
         }
-        
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/del/$inbound_id";
         else $url = "$panel_url/xui/inbound/del/$inbound_id";
-       
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -3447,21 +3447,21 @@ function resetIpLog($server_id, $remark){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -3481,7 +3481,7 @@ function resetIpLog($server_id, $remark){
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     if($serverType == "sanaei") $url = $panel_url. "/panel/inbound/clearClientIps/" . urlencode($remark);
     else $url = $panel_url. "/xui/inbound/clearClientIps/" . urlencode($remark);
 
@@ -3523,21 +3523,21 @@ function resetClientTraffic($server_id, $remark, $inboundId = null){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -3620,9 +3620,9 @@ function addInboundAccount($server_id, $client_id, $inbound_id, $expiryTime, $re
                 $stmt->execute();
                 $file_detail = $stmt->get_result()->fetch_assoc();
                 $stmt->close();
-            
+
                 $flow = isset($file_detail['flow']) && $file_detail['flow'] != "None" ? $file_detail['flow'] : "";
-                
+
                 $newClient = [
                     "$id_label" => $client_id,
                     "enable" => true,
@@ -3666,21 +3666,21 @@ function addInboundAccount($server_id, $client_id, $inbound_id, $expiryTime, $re
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -3700,18 +3700,18 @@ function addInboundAccount($server_id, $client_id, $inbound_id, $expiryTime, $re
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     if($serverType == "sanaei" || $serverType == "alireza"){
         $newSetting = array();
         if($newarr == '')$newSetting['clients'][] = $newClient;
         elseif(is_array($newarr)) $newSetting['clients'][] = $newarr;
-        
+
         $newSetting = json_encode($newSetting);
         $dataArr = array(
             "id"=>$inbound_id,
             "settings" => $newSetting
             );
-            
+
         if($serverType == "sanaei") $url = "$panel_url/panel/inbound/addClient/";
         else $url = "$panel_url/xui/inbound/addClient/";
 
@@ -3865,7 +3865,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     $header_type = json_decode($row->streamSettings)->tcpSettings->header->type;
                     $path = json_decode($row->streamSettings)->tcpSettings->header->request->path[0];
                     $host = json_decode($row->streamSettings)->tcpSettings->header->request->headers->Host[0];
-                    
+
                     if($tlsStatus == "reality"){
                         $realitySettings = json_decode($row->streamSettings)->realitySettings;
                         $fp = $realitySettings->settings->fingerprint;
@@ -3890,7 +3890,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                         $alpn = $tlsSetting->certificates->alpn;
 						if(isset($tlsSetting->serverName)) $sni = $tlsSetting->serverName;
 						if(isset($tlsSetting->settings->serverName)) $sni = $tlsSetting->settings->serverName;
-                    } 
+                    }
                     elseif($tlsStatus == "reality"){
                         $realitySettings = json_decode($row->streamSettings)->realitySettings;
                         $fp = $realitySettings->settings->fingerprint;
@@ -3919,7 +3919,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     $kcpType = $kcpSettings->header->type;
                     $kcpSeed = $kcpSettings->seed;
                 }
-                
+
                 break;
             }
         }else{
@@ -3936,7 +3936,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     // $remark = (!empty($row->remark)?($row->remark . "-"):"") . $remark;
                     $remark = $remark;
                 }
-                
+
                 $port = $row->port;
                 $tlsStatus = json_decode($row->streamSettings)->security;
                 $tlsSetting = json_decode($row->streamSettings)->tlsSettings;
@@ -3946,7 +3946,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     $header_type = json_decode($row->streamSettings)->tcpSettings->header->type;
                     $path = json_decode($row->streamSettings)->tcpSettings->header->request->path[0];
                     $host = json_decode($row->streamSettings)->tcpSettings->header->request->headers->Host[0];
-                    
+
                     if($tlsStatus == "reality"){
                         $realitySettings = json_decode($row->streamSettings)->realitySettings;
                         $fp = $realitySettings->settings->fingerprint;
@@ -4007,7 +4007,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
             if($protocol == 'vless'){
                 if($rahgozar == true){
                     if(empty($host) && isset($hostMatch[1])) $host = $hostMatch[1];
-                    
+
                     if(!empty($host)){
                         $parseAdd = parse_url($host);
                         $parseAdd = $parseAdd['host']??$parseAdd['path'];
@@ -4035,43 +4035,47 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     }else{
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName#$remark";
                     }
-    
+
                 }
             }
-    
+
             if($protocol == 'trojan'){
                 $psting = '';
                 if($header_type == 'http') $psting .= "&path=/&host=$host";
                 if($netType == 'tcp' and $header_type == 'http') $psting .= '&headerType=http';
                 if(strlen($sni) > 1) $psting .= "&sni=$sni";
                 $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus{$psting}#$remark";
-                
+
                 if($netType == 'grpc'){
                     if($tlsStatus == 'tls'){
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName&sni=$sni#$remark";
                     }else{
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName#$remark";
                     }
-    
+
                 }
             }elseif($protocol == 'vmess'){
                 $vmessArr = [
                     "v"=> "2",
                     "ps"=> $remark,
                     "add"=> $server_ip,
-                    "port"=> $rahgozar == true?($customPort!=0?$customPort:443):$port,
+//                    "port"=> $rahgozar == true?($customPort!=0?$customPort:443):$port,
+                    "port" => $port,
                     "id"=> $uniqid,
                     "aid"=> 0,
                     "net"=> $netType,
                     "type"=> $kcpType ? $kcpType : "none",
-                    "host"=> ($rahgozar == true && empty($host))? $server_ip:(is_null($host) ? '' : $host),
-                    "path"=> ($rahgozar == true)?($path . ($customPath == true?"?ed=2048":"")):((is_null($path) and $path != '') ? '/' : (is_null($path) ? '' : $path)),
-                    "tls"=> $rahgozar == true?"tls":((is_null($tlsStatus)) ? 'none' : $tlsStatus)
+//                    "host"=> ($rahgozar == true && empty($host))? $server_ip:(is_null($host) ? '' : $host),
+                    "host" => '',
+//                    "path"=> ($rahgozar == true)?($path . ($customPath == true?"?ed=2048":"")):((is_null($path) and $path != '') ? '/' : (is_null($path) ? '' : $path)),
+                    "path" => '',
+//                    "tls"=> $rahgozar == true?"tls":((is_null($tlsStatus)) ? 'none' : $tlsStatus)
+                    "tls" => "none"
                 ];
-                
+
                 if($rahgozar == true){
                     if(empty($host) && isset($hostMatch[1])) $host = $hostMatch[1];
-                    
+
                     if(!empty($host)){
                         $parseAdd = parse_url($host);
                         $parseAdd = $parseAdd['host']??$parseAdd['path'];
@@ -4082,7 +4086,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                             if(count($explodeAdd) >= 3) $sni = $uniqid . "." . $explodeAdd[1] . "." . $explodeAdd[2];
                             else $sni = $uniqid . "." . $host;
                         }
-    
+
                         $vmessArr['alpn'] = 'http/1.1';
                     }
                 }
@@ -4104,11 +4108,11 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                 $urldata = base64_encode(json_encode($vmessArr,JSON_UNESCAPED_SLASHES,JSON_PRETTY_PRINT));
                 $outputlink = "vmess://$urldata";
             }
-        }else { 
+        }else {
             if($protocol == 'vless'){
                 if($rahgozar == true){
                     if(empty($host) && isset($hostMatch[1])) $host = $hostMatch[1];
-                    
+
                     if(!empty($host)){
                         $parseAdd = parse_url($host);
                         $parseAdd = $parseAdd['host']??$parseAdd['path'];
@@ -4121,7 +4125,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                         }
                     }
                 }
-                
+
                 if(strlen($sni) > 1 && $tlsStatus != "reality") $psting = "&sni=$sni"; else $psting = '';
                 if($netType == 'tcp'){
                     if($netType == 'tcp' and $header_type == 'http') $psting .= '&headerType=http';
@@ -4146,20 +4150,20 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName#$remark";
                     }
                 }
-            }elseif($protocol == 'trojan'){                
+            }elseif($protocol == 'trojan'){
                 $psting = '';
                 if($header_type == 'http') $psting .= "&path=/&host=$host";
                 if($netType == 'tcp' and $header_type == 'http') $psting .= '&headerType=http';
                 if(strlen($sni) > 1) $psting .= "&sni=$sni";
                 $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus{$psting}#$remark";
-                
+
                 if($netType == 'grpc'){
                     if($tlsStatus == 'tls'){
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName&sni=$sni#$remark";
                     }else{
                         $outputlink = "$protocol://$uniqid@$server_ip:$port?type=$netType&security=$tlsStatus&serviceName=$serviceName#$remark";
                     }
-    
+
                 }
             }elseif($protocol == 'vmess'){
                 $vmessArr = [
@@ -4171,13 +4175,16 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                     "aid"=> 0,
                     "net"=> $netType,
                     "type"=> ($header_type) ? $header_type : ($kcpType ? $kcpType : "none"),
-                    "host"=> ($rahgozar == true && empty($host))?$server_ip:(is_null($host) ? '' : $host),
-                    "path"=> ($rahgozar == true)?($path . ($customPath == true?"?ed=2048":"")) :((is_null($path) and $path != '') ? '/' : (is_null($path) ? '' : $path)),
-                    "tls"=> $rahgozar == true?"tls":((is_null($tlsStatus)) ? 'none' : $tlsStatus)
+//                    "host"=> ($rahgozar == true && empty($host))?$server_ip:(is_null($host) ? '' : $host),
+                    "host"=> '',
+//                    "path"=> ($rahgozar == true)?($path . ($customPath == true?"?ed=2048":"")) :((is_null($path) and $path != '') ? '/' : (is_null($path) ? '' : $path)),
+                    "path"=> '',
+//                    "tls"=> $rahgozar == true?"tls":((is_null($tlsStatus)) ? 'none' : $tlsStatus)
+                    "tls"=> 'none'
                 ];
                 if($rahgozar == true){
                     if(empty($host) && isset($hostMatch[1])) $host = $hostMatch[1];
-                    
+
                     if(!empty($host)){
                         $subDomain = RandomString(4, "domain");
                         $parseAdd = parse_url($host);
@@ -4188,7 +4195,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                             if(count($explodeAdd) >= 3) $sni = $uniqid . "." . $explodeAdd[1] . "." .$explodeAdd[2];
                             else $sni = $uniqid . "." . $host;
                         }
-                        
+
                         $vmessArr['alpn'] = 'http/1.1';
                     }
                 }
@@ -4201,7 +4208,7 @@ function getConnectionLink($server_id, $uniqid, $protocol, $remark, $port, $netT
                 if($netType == 'kcp'){
                     $vmessArr['path'] = $kcpSeed ? $kcpSeed : $vmessArr['path'];
     	        }
-    
+
                 if(strlen($sni) > 1) $vmessArr['sni'] = $sni;
                 $urldata = base64_encode(json_encode($vmessArr,JSON_UNESCAPED_SLASHES,JSON_PRETTY_PRINT));
                 $outputlink = "vmess://$urldata";
@@ -4234,7 +4241,7 @@ function updateConfig($server_id, $inboundId, $protocol, $netType = 'tcp', $secu
         $tlsSettings['serverName'] = $sni;
         $tlsSettings = json_encode($tlsSettings,488|JSON_UNESCAPED_UNICODE);
     }
-    
+
     $response = getJson($server_id);
     if(!$response) return null;
     $response = $response->obj;
@@ -4272,7 +4279,7 @@ function updateConfig($server_id, $inboundId, $protocol, $netType = 'tcp', $secu
             }';
 
         }elseif($security == 'xtls' && $serverType != "sanaei" && $serverType != "alireza") {
-            
+
             $tcpSettings = '{
         	  "network": "tcp",
         	  "security": "'.$security.'",
@@ -4310,14 +4317,14 @@ function updateConfig($server_id, $inboundId, $protocol, $netType = 'tcp', $secu
               }
             }';
         }
-        
-        
+
+
                 $streamSettings = ($netType == 'tcp') ? $tcpSettings : $wsSettings;
 		if($netType == 'grpc'){
 		    $keyFileInfo = json_decode($tlsSettings,true);
 		    $certificateFile = "/root/cert.crt";
 		    $keyFile = '/root/private.key';
-		    
+
 		    if(isset($keyFileInfo['certificates'])){
 		        $certificateFile = $keyFileInfo['certificates'][0]['certificateFile'];
 		        $keyFile = $keyFileInfo['certificates'][0]['keyFile'];
@@ -4438,21 +4445,21 @@ function updateConfig($server_id, $inboundId, $protocol, $netType = 'tcp', $secu
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -4472,7 +4479,7 @@ function updateConfig($server_id, $inboundId, $protocol, $netType = 'tcp', $secu
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     if($serverType == "sanaei") $url = "$panel_url/panel/inbound/update/$iid";
     else $url = "$panel_url/xui/inbound/update/$iid";
     curl_setopt_array($curl, array(
@@ -4594,7 +4601,7 @@ function editInbound($server_id, $uniqid, $uuid, $protocol, $netType = 'tcp', $s
         	}';
     	}
         }elseif($security == 'xtls' && $serverType != "sanaei" && $serverType != "alireza") {
-            
+
             $tcpSettings = '{
         	  "network": "tcp",
         	  "security": "'.$security.'",
@@ -4671,14 +4678,14 @@ function editInbound($server_id, $uniqid, $uuid, $protocol, $netType = 'tcp', $s
 		}';
 		}
         }
-        
-        
+
+
                 $streamSettings = ($netType == 'tcp') ? $tcpSettings : $wsSettings;
 		if($netType == 'grpc'){
 		    $keyFileInfo = json_decode($tlsSettings,true);
 		    $certificateFile = "/root/cert.crt";
 		    $keyFile = '/root/private.key';
-		    
+
 		    if(isset($keyFileInfo['certificates'])){
 		        $certificateFile = $keyFileInfo['certificates'][0]['certificateFile'];
 		        $keyFile = $keyFileInfo['certificates'][0]['keyFile'];
@@ -4918,21 +4925,21 @@ function editInbound($server_id, $uniqid, $uuid, $protocol, $netType = 'tcp', $s
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -4952,10 +4959,10 @@ function editInbound($server_id, $uniqid, $uuid, $protocol, $netType = 'tcp', $s
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     if($serverType == "sanaei") $url = "$panel_url/panel/inbound/update/$iid";
     else $url = "$panel_url/xui/inbound/update/$iid";
-    
+
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
@@ -4991,25 +4998,25 @@ function getMarzbanToken($server_id){
     $stmt->execute();
     $server_info = $stmt->get_result()->fetch_assoc();
     $stmt->close();
-    
+
     $panel_url = $server_info['panel_url'];
     $username = $server_info['username'];
     $password = $server_info['password'];
-    
+
     $loginUrl = $panel_url .'/api/admin/token';
     $postFields = array(
         'username' => $username,
         'password' => $password
     );
-    
-    
+
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -5025,7 +5032,7 @@ function getMarzbanToken($server_id){
 }
 function getMarzbanJson($server_id, $token = null){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5053,7 +5060,7 @@ function getMarzbanJson($server_id, $token = null){
 }
 function getMarzbanUserInfo($server_id, $remark){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5071,7 +5078,7 @@ function getMarzbanUserInfo($server_id, $remark){
         curl_setopt($curl, CURLOPT_URL, $panel_url . $info->subscription_url);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+        curl_setopt($curl, CURLOPT_TIMEOUT, 3);
         $response = curl_exec($curl);
         if($response && !curl_error($curl)){
             $configInfo = $info;
@@ -5085,7 +5092,7 @@ function getMarzbanUserInfo($server_id, $remark){
 }
 function getMarzbanUser($server_id, $remark, $token = null){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5096,7 +5103,7 @@ function getMarzbanUser($server_id, $remark, $token = null){
 
     if($token == null) $token = getMarzbanToken($server_id);
     if(isset($token->detail)){return (object) ['success'=>false, 'msg'=>$token->detail];}
-    
+
     $panel_url .= '/api/user/' . urlencode($remark);
 
     $curl = curl_init();
@@ -5109,13 +5116,13 @@ function getMarzbanUser($server_id, $remark, $token = null){
     ));
 
     $response = json_decode(curl_exec($curl));
-    
+
     curl_close($curl);
     return $response;
 }
 function getMarzbanHosts($server_id){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5139,13 +5146,13 @@ function getMarzbanHosts($server_id){
     ));
 
     $response = json_decode(curl_exec($curl));
-    
+
     curl_close($curl);
     return $response;
 }
 function addMarzbanUser($server_id, $remark, $volume, $days, $plan_id){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5156,8 +5163,8 @@ function addMarzbanUser($server_id, $remark, $volume, $days, $plan_id){
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
     $serverType = $server_info['type'];
-    
-    
+
+
     $stmt = $connection->prepare("SELECT * FROM `server_plans` WHERE `id` = ?");
     $stmt->bind_param('i', $plan_id);
     $stmt->execute();
@@ -5202,7 +5209,7 @@ function addMarzbanUser($server_id, $remark, $volume, $days, $plan_id){
 }
 function editMarzbanConfig($server_id,$info){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5218,26 +5225,26 @@ function editMarzbanConfig($server_id,$info){
 
     $remark = $info['remark'];
     $configInfo = getMarzbanUser($server_id, $remark, $token);
-    
-    
+
+
     $expireTime = $configInfo->expire;
     $volume = $configInfo->data_limit;
     $configState = $configInfo->status;
-    
+
     if(isset($info['plus_day'])){
         if($expireTime < time()) $expireTime = time() + (86400 * $info['plus_day']);
         else $expireTime += (86400 * $info['plus_day']);
     }
     elseif(isset($info['days'])) $expireTime = time() + (86400 * $info['days']);
-    
+
     if(isset($info['plus_volume'])) $volume += $info['plus_volume'] * 1073741824;
     elseif(isset($info['volume'])){
         $volume = $info['volume'] * 1073741824;
         $response = resetMarzbanTraffic($server_id, $remark, $token);
-        
+
         if(!$response->success) return $response;
     }
-    
+
     $postFields = array(
         "inbounds" => $configInfo->inbounds,
         "proxies" => $configInfo->proxies,
@@ -5248,7 +5255,7 @@ function editMarzbanConfig($server_id,$info){
         "data_limit_reset_strategy"=> $configInfo->data_limit_reset_strategy,
         "status" => "active"
     );
-    
+
     $panel_url .=  '/api/user/'. $remark;
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $panel_url);
@@ -5260,7 +5267,7 @@ function editMarzbanConfig($server_id,$info){
         'Authorization: Bearer ' .  $token->access_token,
         'Content-Type: application/json'
         ));
-    
+
     $response = curl_exec($curl);
     curl_close($curl);
     if(isset($response->detail)){
@@ -5271,7 +5278,7 @@ function editMarzbanConfig($server_id,$info){
 }
 function resetMarzbanTraffic($server_id, $remark, $token){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5338,7 +5345,7 @@ function renewMarzbanUUID($server_id,$remark){
 
 function deleteMarzban($server_id,$remark){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5349,7 +5356,7 @@ function deleteMarzban($server_id,$remark){
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
     $serverType = $server_info['type'];
-    
+
     $token = getMarzbanToken($server_id);
     if(isset($token->detail)){return (object) ['success'=>false, 'msg'=>$token->detail];}
     $panel_url .=  '/api/user/'. urlencode($remark);
@@ -5366,17 +5373,17 @@ function deleteMarzban($server_id,$remark){
 
     $response = json_decode(curl_exec($curl));
     curl_close($curl);
-    
+
     if(isset($response->detail)){
 		$detail = $response->detail;
         return (object) ['success'=>false, 'msg' => is_object($detail)?implode("-", (array) $detail):$detail];
     }
-    
+
     return (object) ['success'=>true];
 }
 function changeMarzbanState($server_id,$remark){
     global $connection;
-    
+
     $stmt = $connection->prepare("SELECT * FROM server_config WHERE id=?");
     $stmt->bind_param("i", $server_id);
     $stmt->execute();
@@ -5387,7 +5394,7 @@ function changeMarzbanState($server_id,$remark){
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
     $serverType = $server_info['type'];
-    
+
     $token = getMarzbanToken($server_id);
     if(isset($token->detail)){return (object) ['success'=>false, 'msg'=>$token->detail];}
     $configInfo = getMarzbanUser($server_id, $remark, $token);
@@ -5441,23 +5448,23 @@ function getJson($server_id){
     $serverType = $server_info['type'];
 
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
-    
+
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $header = substr($response, 0, $header_size);
     $body = substr($response, $header_size);
@@ -5469,7 +5476,7 @@ function getJson($server_id){
     }
 
     $loginResponse = json_decode($body,true);
-    
+
     if(!$loginResponse['success']){
         curl_close($curl);
         return $loginResponse;
@@ -5498,7 +5505,7 @@ function getJson($server_id){
         CURLOPT_SSL_VERIFYHOST => false,
         CURLOPT_SSL_VERIFYPEER => false,
     ));
-    
+
     $response = curl_exec($curl);
     curl_close($curl);
     return json_decode($response);
@@ -5515,21 +5522,21 @@ function getNewCert($server_id){
 
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -5549,7 +5556,7 @@ function getNewCert($server_id){
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     curl_setopt_array($curl, array(
         CURLOPT_URL => "$panel_url/server/getNewX25519Cert",
         CURLOPT_RETURNTRANSFER => true,
@@ -5601,14 +5608,14 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
         $tlsSettings['serverName'] = $sni;
         $tlsSettings = json_encode($tlsSettings);
     }
-    
+
     $volume = ($volume == 0) ? 0 : floor($volume * 1073741824);
     $headers = getNewHeaders($netType, $request_header, $response_header, $header_type);
 //---------------------------------------Trojan------------------------------------//
     if($protocol == 'trojan'){
         // protocol trojan
         if($security == 'none'){
-            
+
             $tcpSettings = '{
         	  "network": "tcp",
         	  "security": "'.$security.'",
@@ -5626,7 +5633,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
                 "headers": '.$headers.'
               }
             }';
-            
+
         	if($serverType == "sanaei" || $serverType == "alireza"){
                 $settings = '{
         	  "clients": [
@@ -5686,7 +5693,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
             	  "fallbacks": []
                 }';
                 }
-        
+
         else{
             $tcpSettings = '{
         	  "network": "tcp",
@@ -5741,7 +5748,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
 		    $keyFileInfo = json_decode($tlsSettings,true);
 		    $certificateFile = "/root/cert.crt";
 		    $keyFile = '/root/private.key';
-		    
+
 		    if(isset($keyFileInfo['certificates'])){
 		        $certificateFile = $keyFileInfo['certificates'][0]['certificateFile'];
 		        $keyFile = $keyFileInfo['certificates'][0]['keyFile'];
@@ -5950,8 +5957,8 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
             }
             }
         }
-        
-        
+
+
 		if($protocol == 'vless'){
 		    if($serverType =="sanaei" || $serverType == "alireza"){
 		        if($reality == "true"){
@@ -5960,7 +5967,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
                     $stmt->execute();
                     $file_detail = $stmt->get_result()->fetch_assoc();
                     $stmt->close();
-                
+
                     $dest = !empty($file_detail['dest'])?$file_detail['dest']:"yahoo.com";
                     $serverNames = !empty($file_detail['serverNames'])?$file_detail['serverNames']:
                                 '[
@@ -5969,7 +5976,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
                                 ]';
                     $spiderX = !empty($file_detail['spiderX'])?$file_detail['spiderX']:"";
                     $flow = isset($file_detail['flow']) && $file_detail['flow'] != "None" ? $file_detail['flow'] : "";
-                    
+
 
 
 		            $certInfo = getNewCert($server_id)->obj;
@@ -6088,7 +6095,7 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
 		    $keyFileInfo = json_decode($tlsSettings,true);
 		    $certificateFile = "/root/cert.crt";
 		    $keyFile = '/root/private.key';
-		    
+
 		    if(isset($keyFileInfo['certificates'])){
 		        $certificateFile = $keyFileInfo['certificates'][0]['certificateFile'];
 		        $keyFile = $keyFileInfo['certificates'][0]['keyFile'];
@@ -6145,26 +6152,26 @@ function addUser($server_id, $client_id, $protocol, $port, $expiryTime, $remark,
         $dataArr = array('up' => '0','down' => '0','total' => $volume, 'remark' => $remark,'enable' => 'true','expiryTime' => $expiryTime,'listen' => '','port' => $port,'protocol' => $protocol,'settings' => $settings,'streamSettings' => $streamSettings
         ,'sniffing' => $sniffing);
     }
-    
+
     $phost = str_ireplace('https://','',str_ireplace('http://','',$panel_url));
     $serverName = $server_info['username'];
     $serverPass = $server_info['password'];
-    
+
     $loginUrl = $panel_url . '/login';
-    
+
     $postFields = array(
         "username" => $serverName,
         "password" => $serverPass
         );
-        
-        
+
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $loginUrl);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 3); 
+    curl_setopt($curl, CURLOPT_TIMEOUT, 3);
     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
     curl_setopt($curl, CURLOPT_HEADER, 1);
     $response = curl_exec($curl);
@@ -6186,23 +6193,23 @@ sendMessage(curl_error($curl));
         curl_close($curl);
         return $loginResponse;
     }
-    
+
     if($serverType == "sanaei") $url = "$panel_url/panel/inbound/add";
     else $url = "$panel_url/xui/inbound/add";
-    
+
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
-        CURLOPT_CONNECTTIMEOUT => 15, 
+        CURLOPT_CONNECTTIMEOUT => 15,
         CURLOPT_TIMEOUT => 15,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS => $dataArr,
         CURLOPT_SSL_VERIFYHOST => false,
-        CURLOPT_SSL_VERIFYPEER => false, 
+        CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_HEADER => false,
         CURLOPT_HTTPHEADER => array(
             'User-Agent:  Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0',
