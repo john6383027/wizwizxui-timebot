@@ -97,31 +97,36 @@ sudo systemctl restart apache2.service
 
 wait
 
-git clone https://github.com/wizwizdev/wizwizxui-timebot.git /var/www/html/wizwizxui-timebot
-sudo chown -R www-data:www-data /var/www/html/wizwizxui-timebot/
-sudo chmod -R 755 /var/www/html/wizwizxui-timebot/
+echo -e "enter base folder name : "
+read baseFolder
+echo -e "enter internal folder name : "
+read internalFolder
+
+git clone https://github.com/john6383027/wizwizxui-timebot.git /var/www/html/${baseFolder}/${internalFolder}
+sudo chown -R www-data:www-data /var/www/html/${baseFolder}/${internalFolder}
+sudo chmod -R 755 /var/www/html/${baseFolder}/${internalFolder}
 echo -e "\n\033[33mWizWiz config and script have been installed successfully\033[0m"
 
 wait
-    
-        
+
+
 RANDOM_CODE=$(LC_CTYPE=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 40)
-mkdir "/var/www/html/${RANDOM_CODE}"
+mkdir "/var/www/html/${baseFolder}/${RANDOM_CODE}"
 echo "Directory created: ${RANDOM_CODE}"
 echo "Folder created successfully!"
 
- cd /var/www/html/
- wget -O wizwizpanel.zip https://github.com/wizwizdev/wizwizxui-timebot/releases/download/10.3.1/wizwizpanel.zip
+ cd /var/www/html/${baseFolder}
+ wget -O wizwizpanel.zip https://github.com/wizwizdev/wizwizxui-timebot/releases/download/9.1.9/wizwizpanel.zip
 
- file_to_transfer="/var/www/html/wizwizpanel.zip"
- destination_dir=$(find /var/www/html -type d -name "*${RANDOM_CODE}*" -print -quit)
+ file_to_transfer="/var/www/html/${baseFolder}/wizwizpanel.zip"
+ destination_dir=$(find /var/www/html/${baseFolder} -type d -name "*${RANDOM_CODE}*" -print -quit)
 
  if [ -z "$destination_dir" ]; then
-   echo "Error: Could not find directory containing 'wiz' in '/var/www/html'"
+   echo "Error: Could not find directory containing 'wiz' in '/var/www/html/${baseFolder}'"
    exit 1
  fi
 
- mv "$file_to_transfer" "$destination_dir/" && yes | unzip "$destination_dir/wizwizpanel.zip" -d "$destination_dir/" && rm "$destination_dir/wizwizpanel.zip" && sudo chmod -R 755 "$destination_dir/" && sudo chown -R www-data:www-data "$destination_dir/" 
+ mv "$file_to_transfer" "$destination_dir/" && yes | unzip "$destination_dir/wizwizpanel.zip" -d "$destination_dir/" && rm "$destination_dir/wizwizpanel.zip" && sudo chmod -R 755 "$destination_dir/" && sudo chown -R www-data:www-data "$destination_dir/"
 
 
 wait
@@ -130,13 +135,13 @@ wait
 if [ ! -d "/root/confwizwiz" ]; then
 
     sudo mkdir /root/confwizwiz
-    
+
     sleep 1
-    
+
     touch /root/confwizwiz/dbrootwizwiz.txt
     sudo chmod -R 777 /root/confwizwiz/dbrootwizwiz.txt
     sleep 1
-    
+
     randomdbpasstxt=$(openssl rand -base64 10 | tr -dc 'a-zA-Z0-9' | cut -c1-30)
 
     ASAS="$"
@@ -144,7 +149,7 @@ if [ ! -d "/root/confwizwiz" ]; then
     echo "${ASAS}user = 'root';" >> /root/confwizwiz/dbrootwizwiz.txt
     echo "${ASAS}pass = '${randomdbpasstxt}';" >> /root/confwizwiz/dbrootwizwiz.txt
     #echo "${ASAS}paths = '${RANDOM_CODE}';" >> /root/confwizwiz/dbrootwizwiz.txt
-    
+
     sleep 1
 
     passs=$(cat /root/confwizwiz/dbrootwizwiz.txt | grep '$pass' | cut -d"'" -f2)
@@ -163,11 +168,11 @@ clear
 
 echo " "
 echo -e "\e[32m
-██     ██ ██ ███████ ██     ██ ██ ███████     ███████ ███████ ██      
-██     ██ ██    ███  ██     ██ ██    ███      ██      ██      ██      
-██  █  ██ ██   ███   ██  █  ██ ██   ███       ███████ ███████ ██      
-██ ███ ██ ██  ███    ██ ███ ██ ██  ███             ██      ██ ██      
- ███ ███  ██ ███████  ███ ███  ██ ███████     ███████ ███████ ███████ 
+██     ██ ██ ███████ ██     ██ ██ ███████     ███████ ███████ ██
+██     ██ ██    ███  ██     ██ ██    ███      ██      ██      ██
+██  █  ██ ██   ███   ██  █  ██ ██   ███       ███████ ███████ ██
+██ ███ ██ ██  ███    ██ ███ ██ ██  ███             ██      ██ ██
+ ███ ███  ██ ███████  ███ ███  ██ ███████     ███████ ███████ ███████
 \033[0m\n"
 
 read -p "Enter the domain: " domainname
@@ -187,11 +192,11 @@ DOMAIN_NAME="$domainname"
 
 # update cron
 PATHS=$(cat /root/confwizwiz/dbrootwizwiz.txt | grep '$path' | cut -d"'" -f2)
-(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/wizwizxui-timebot/settings/messagewizwiz.php >/dev/null 2>&1") | sort - | uniq - | crontab -
-(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/wizwizxui-timebot/settings/rewardReport.php >/dev/null 2>&1") | sort - | uniq - | crontab -
-(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/wizwizxui-timebot/settings/warnusers.php >/dev/null 2>&1") | sort - | uniq - | crontab -
-(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/wizwizxui-timebot/settings/gift2all.php >/dev/null 2>&1") | sort - | uniq - | crontab -
-(crontab -l ; echo "*/3 * * * * curl https://${DOMAIN_NAME}/wizwizxui-timebot/settings/tronChecker.php >/dev/null 2>&1") | sort - | uniq - | crontab -
+(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/${baseFolder}/${internalFolder}/settings/messagewizwiz.php >/dev/null 2>&1") | sort - | uniq - | crontab -
+(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/${baseFolder}/${internalFolder}/settings/rewardReport.php >/dev/null 2>&1") | sort - | uniq - | crontab -
+(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/${baseFolder}/${internalFolder}/settings/warnusers.php >/dev/null 2>&1") | sort - | uniq - | crontab -
+(crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/${baseFolder}/${internalFolder}/settings/gift2all.php >/dev/null 2>&1") | sort - | uniq - | crontab -
+(crontab -l ; echo "*/3 * * * * curl https://${DOMAIN_NAME}/${baseFolder}/${internalFolder}/settings/tronChecker.php >/dev/null 2>&1") | sort - | uniq - | crontab -
 (crontab -l ; echo "* * * * * curl https://${DOMAIN_NAME}/${PATHS}/backupnutif.php >/dev/null 2>&1") | sort - | uniq - | crontab -
 
 echo -e "\n\e[92m Setting Up Cron...\033[0m\n"
@@ -251,8 +256,9 @@ wait
         clear
         echo -e "\n\e[91mYou have already created the database\033[0m\n"
     else
-        dbname=wizwiz
         clear
+        echo -e "Enter db name:"
+        read dbname
         echo -e "\n\e[32mPlease enter the database username!\033[0m"
         printf "[+] Default user name is \e[91m${randomdbdb}\e[0m ( let it blank to use this user name ): "
         read dbuser
@@ -268,11 +274,11 @@ wait
         fi
 
         mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $dbname;" -e "CREATE USER '$dbuser'@'%' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'%';FLUSH PRIVILEGES;" -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'localhost';FLUSH PRIVILEGES;"
-        
+
         echo -e "\n\e[95mDatabase Created.\033[0m"
-        
+
         wait
-        
+
 
 
         printf "\n\e[33m[+] \e[36mBot Token: \033[0m"
@@ -287,63 +293,70 @@ wait
         fi
 
         ASAS="$"
-	
+
         wait
 
         sleep 1
-        
-        file_path="/var/www/html/wizwizxui-timebot/baseInfo.php"
-        
+
+        file_path="/var/www/html/${baseFolder}/${internalFolder}/baseInfo.php"
+
         if [ -f "$file_path" ]; then
           rm "$file_path"
           echo -e "File deleted successfully."
         else
           echo -e "File not found."
         fi
-        
+
         sleep 2
-        
+
         # print file
-        echo -e "<?php" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "error_reporting(0);" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}botToken = '${YOUR_BOT_TOKEN}';" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}dbUserName = '${dbuser}';" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}dbPassword = '${dbpass}';" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}dbName = '${dbname}';" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}botUrl = 'https://${YOUR_DOMAIN}/wizwizxui-timebot/';" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "${ASAS}admin = ${YOUR_CHAT_ID};" >> /var/www/html/wizwizxui-timebot/baseInfo.php
-        echo -e "?>" >> /var/www/html/wizwizxui-timebot/baseInfo.php
+        echo -e "<?php" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "error_reporting(0);" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}botToken = '${YOUR_BOT_TOKEN}';" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}dbUserName = '${dbuser}';" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}dbPassword = '${dbpass}';" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}dbName = '${dbname}';" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}botUrl = 'https://${YOUR_DOMAIN}/${baseFolder}/${internalFolder}/';" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "${ASAS}admin = ${YOUR_CHAT_ID};" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
+        echo -e "?>" >> /var/www/html/${baseFolder}/${internalFolder}/baseInfo.php
 
         sleep 1
 
-        curl -F "url=https://${YOUR_DOMAIN}/wizwizxui-timebot/bot.php" "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/setWebhook"
+        curl -F "url=https://${YOUR_DOMAIN}/${baseFolder}/${internalFolder}/bot.php" "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/setWebhook"
         MESSAGE="✅ The wizwiz bot has been successfully installed! @wizwizch"
         curl -s -X POST "https://api.telegram.org/bot${YOUR_BOT_TOKEN}/sendMessage" -d chat_id="${YOUR_CHAT_ID}" -d text="$MESSAGE"
-        
-        
+
+
         sleep 1
-        
-        url="https://${YOUR_DOMAIN}/wizwizxui-timebot/createDB.php"
+
+        url="https://${YOUR_DOMAIN}/${baseFolder}/${internalFolder}/createDB.php"
         curl $url
-        
+
         sleep 1
-        
-        sudo rm -r /var/www/html/wizwizxui-timebot/webpanel
-        sudo rm -r /var/www/html/wizwizxui-timebot/install
-        sudo rm /var/www/html/wizwizxui-timebot/createDB.php
-	rm /var/www/html/wizwizxui-timebot/updateShareConfig.php
-	rm /var/www/html/wizwizxui-timebot/README.md
-	rm /var/www/html/wizwizxui-timebot/README-fa.md
-	rm /var/www/html/wizwizxui-timebot/LICENSE
-	rm /var/www/html/wizwizxui-timebot/update.sh
-	rm /var/www/html/wizwizxui-timebot/wizwiz.sh
-	rm /var/www/html/wizwizxui-timebot/tempCookie.txt
-	rm /var/www/html/wizwizxui-timebot/settings/messagewizwiz.json
-            
+
+        sudo rm -r /var/www/html/${baseFolder}/${internalFolder}/webpanel
+        sudo rm -r /var/www/html/${baseFolder}/${internalFolder}/install
+        sudo rm /var/www/html/${baseFolder}/${internalFolder}/createDB.php
+	rm /var/www/html/${baseFolder}/${internalFolder}/updateShareConfig.php
+	rm /var/www/html/${baseFolder}/${internalFolder}/README.md
+	rm /var/www/html/${baseFolder}/${internalFolder}/README-fa.md
+	rm /var/www/html/${baseFolder}/${internalFolder}/LICENSE
+	rm /var/www/html/${baseFolder}/${internalFolder}/update.sh
+	rm /var/www/html/${baseFolder}/${internalFolder}/wizwiz.sh
+	rm /var/www/html/${baseFolder}/${internalFolder}/tempCookie.txt
+	rm /var/www/html/${baseFolder}/${internalFolder}/settings/messagewizwiz.json
+
+	      echo  -e "enter bot name : "
+        read botName
+
+        file_values_path="/var/www/html/${baseFolder}/${internalFolder}/settings/values.php"
+
+        sed -i "s/botNameHere/${botName}/g" "${file_values_path}"
+
         clear
-        
+
         echo " "
-        
+
         echo -e "\e[100mDatabase information:\033[0m"
 	echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/phpmyadmin\033[0m"
         echo -e "\e[33mDatabase name: \e[36m${dbname}\033[0m"
@@ -351,10 +364,10 @@ wait
         echo -e "\e[33mDatabase password: \e[36m${dbpass}\033[0m"
         echo " "
         echo -e "\e[100mwizwiz panel:\033[0m"
-        echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/${RANDOM_CODE}/login.php\033[0m"
-        
+        echo -e "\e[33maddres: \e[36mhttps://${YOUR_DOMAIN}/${baseFolder}/${RANDOM_CODE}/login.php\033[0m"
+
         echo " "
-        
+
         echo -e "Good Luck Baby! \e[94mThis project is for free. If you like it, be sure to donate me :) , so let's go \033[0m\n"
 
         fi
@@ -362,8 +375,8 @@ wait
 
         elif [ "$ROOT_PASSWORD" = "" ] || [ "$ROOT_USER" = "" ]; then
         echo -e "\n\e[36mThe password is empty.\033[0m\n"
-        else 
-        
+        else
+
         echo -e "\n\e[36mThe password is not correct.\033[0m\n"
 
         fi

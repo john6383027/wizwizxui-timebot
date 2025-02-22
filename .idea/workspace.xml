@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d1337753-2379-4400-8361-607160899664" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/wizwiz.sh" beforeDir="false" afterPath="$PROJECT_DIR$/wizwiz.sh" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/bot.php" root0="SKIP_INSPECTION" root1="SKIP_INSPECTION" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\xampp\php\php.exe" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2hbZd0LL5QXQIK99thslo94PtF5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowPanel.toolwindow.highlight.mappings": "true",
+    "WebServerToolWindowPanel.toolwindow.highlight.symlinks": "true",
+    "WebServerToolWindowPanel.toolwindow.show.date": "false",
+    "WebServerToolWindowPanel.toolwindow.show.permissions": "false",
+    "WebServerToolWindowPanel.toolwindow.show.size": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/laragon/www",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PS-241.17011.119" />
+        <option value="bundled-php-predefined-ba97393d7c68-48a1a656d44e-com.jetbrains.php.sharedIndexes-PS-241.17011.119" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d1337753-2379-4400-8361-607160899664" name="Changes" comment="" />
+      <created>1717864822129</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1717864822129</updated>
+      <workItem from="1717864823840" duration="77000" />
+      <workItem from="1717864917791" duration="7265000" />
+      <workItem from="1717953955077" duration="5567000" />
+      <workItem from="1718136602248" duration="10821000" />
+      <workItem from="1718290471929" duration="9050000" />
+      <workItem from="1718426118199" duration="2263000" />
+      <workItem from="1718667373344" duration="2000" />
+      <workItem from="1718690486928" duration="27000" />
+      <workItem from="1721233767793" duration="3108000" />
+      <workItem from="1721334088285" duration="2133000" />
+      <workItem from="1721585275112" duration="4323000" />
+      <workItem from="1722276296101" duration="796000" />
+      <workItem from="1722368707503" duration="627000" />
+      <workItem from="1722533454181" duration="2527000" />
+      <workItem from="1722630842037" duration="2297000" />
+      <workItem from="1722880182911" duration="5965000" />
+      <workItem from="1722967050130" duration="12000" />
+      <workItem from="1723404365337" duration="396000" />
+      <workItem from="1723571045048" duration="328000" />
+      <workItem from="1723572257365" duration="5000" />
+      <workItem from="1723746492116" duration="4349000" />
+      <workItem from="1723923293952" duration="5295000" />
+      <workItem from="1724002523342" duration="3378000" />
+      <workItem from="1725129773105" duration="175000" />
+      <workItem from="1725212541410" duration="341000" />
+      <workItem from="1740251064108" duration="93000" />
+      <workItem from="1740251190869" duration="1204000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>remoteDeploymentFS://&lt;cac3f818-7e3d-47b6-bf5a-3aeee3693735&gt;/shahrnetwork/shahrnetworkBot/Raccoon/static/functions.php</url>
+          <line>45</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
