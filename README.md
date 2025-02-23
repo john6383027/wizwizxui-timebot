@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/wizwizdev/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/john6383027/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
       <img width="200" height="200" src="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
@@ -33,8 +33,8 @@ wizwiz is a powerful and professional robot that supports several types of panel
 
 [![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizch&color=blue)](https://telegram.dog/wizwizch)
 [![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizdev)](https://telegram.dog/wizwizdev)
-<img src="https://img.shields.io/github/license/wizwizdev/wizwizxui-timebot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/wizwizdev/wizwizxui-timebot.svg" />
+<img src="https://img.shields.io/github/license/john6383027/wizwizxui-timebot?style=flat-square" />
+<img src="https://img.shields.io/github/v/release/john6383027/wizwizxui-timebot.svg" />
 <!-- <img src="https://visitor-badge.glitch.me/badge?page_id=wizwizdev.wizwizdev" />
  -->
 </div>
@@ -75,7 +75,7 @@ bash <(curl -s https://raw.githubusercontent.com/john6383027/wizwizxui-timebot/m
 
 - With every update and backup, a notification is sent to the manager robot
 ```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/update.sh)
+bash <(curl -s https://raw.githubusercontent.com/john6383027/wizwizxui-timebot/main/update.sh)
 ```
 
 <br>
@@ -201,4 +201,4 @@ Be sure to join the group and channel and support us
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/wizwizdev/wizwizxui-timebot.svg)](https://starchart.cc/wizwizdev/wizwizxui-timebot)
+[![Stargazers over time](https://starchart.cc/john6383027/wizwizxui-timebot.svg)](https://starchart.cc/john6383027/wizwizxui-timebot)
