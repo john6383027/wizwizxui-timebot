@@ -253,7 +253,7 @@ wait
     randomdbdb=$(openssl rand -base64 10 | tr -dc 'a-zA-Z0-9' | cut -c1-22)
 
 clear
-echo -e "\n\e[91mEnter the database name: \033[0m"
+echo -e "\n\e[91mEnter the database namee: \033[0m"
 read dbname  # Read user input for database name
 
 # Check if the database already exists
