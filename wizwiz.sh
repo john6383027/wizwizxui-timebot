@@ -252,7 +252,7 @@ wait
 
     randomdbdb=$(openssl rand -base64 10 | tr -dc 'a-zA-Z0-9' | cut -c1-22)
 
-    if [[ $(mysql -u root -p$ROOT_PASSWORD -e "SHOW DATABASES LIKE 'wizwizi'") ]]; then
+    if [[ $(mysql -u root -p$ROOT_PASSWORD -e "SHOW DATABASES LIKE 'wizwiz'") ]]; then
         clear
         echo -e "\n\e[91mYou have already created the database\033[0m\n"
     else
