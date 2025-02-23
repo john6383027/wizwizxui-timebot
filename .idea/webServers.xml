@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f7b51c3d-519d-4691-98b2-ad919252bf36" name="dash">
+        <fileTransfer rootFolder="/var/www/html" accessType="SFTP" host="dash.datacamp.work" port="22" sshConfigId="2149f6b3-595d-411f-8963-7b948825f8e2" sshConfig="root@dash.datacamp.work:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -325,7 +325,7 @@ function getAdminKeys(){
         [['text'=>$buttonValues['user_reports'],'callback_data'=>"userReports"]],
         ($from_id == $admin?[['text'=>$buttonValues['admins_list'],'callback_data'=>"adminsList"]]:[]),
         [['text'=>$buttonValues['increase_wallet'],'callback_data'=>"increaseUserWallet"],['text'=>$buttonValues['decrease_wallet'],'callback_data'=>"decreaseUserWallet"]],
-        ['text'=>$buttonValues['create_account'],'callback_data'=>"createMultipleAccounts"],
+        [['text'=>$buttonValues['create_account'],'callback_data'=>"createMultipleAccounts"]],
         [['text'=>$buttonValues['ban_user'],'callback_data'=>"banUser"],['text'=>$buttonValues['unban_user'],'callback_data'=>"unbanUser"]],
         [['text'=>$buttonValues['search_admin_config'],'callback_data'=>"searchUsersConfig"]],
         [['text'=>$buttonValues['server_settings'],'callback_data'=>"serversSetting"]],
