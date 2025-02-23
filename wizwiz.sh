@@ -252,25 +252,19 @@ wait
 
     randomdbdb=$(openssl rand -base64 10 | tr -dc 'a-zA-Z0-9' | cut -c1-22)
 
-clear
-echo -e "\n\e[91mEnter the database namee: \033[0m"
-read dbname  # Read user input for database name
-
-# Check if the database already exists
-if mysql -u root -p$ROOT_PASSWORD -e "SHOW DATABASES LIKE '$dbname'" | grep -q "$dbname"; then
-    clear
-    echo -e "\n\e[91mYou have already created the database\033[0m\n"
-else
-    echo -e "\n\e[32mPlease enter the database username!\033[0m"
-    printf "[+] Default user name is \e[91m${randomdbdb}\e[0m (leave blank to use this username): "
-    read dbuser
-
-    # If user input is empty, use the default username
-    if [ -z "$dbuser" ]; then
+    if [[ $(mysql -u root -p$ROOT_PASSWORD -e "SHOW DATABASES LIKE 'wizwizi'") ]]; then
+        clear
+        echo -e "\n\e[91mYou have already created the database\033[0m\n"
+    else
+        clear
+        echo -e "Enter db name:"
+        read dbname
+        echo -e "\n\e[32mPlease enter the database username!\033[0m"
+        printf "[+] Default user name is \e[91m${randomdbdb}\e[0m ( let it blank to use this user name ): "
+        read dbuser
+        if [ "$dbuser" = "" ]; then
         dbuser=$randomdbdb
-    fi
-fi
-
+        fi
 
         echo -e "\n\e[32mPlease enter the database password!\033[0m"
         printf "[+] Default user name is \e[91m${randomdbpass}\e[0m ( let it blank to use this user name ): "
