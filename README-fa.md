@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/wizwizdev/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/john6383027/wizwizxui-timebot" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
       <img width="200" height="200" src="https://user-images.githubusercontent.com/27927279/227711552-d2bc1089-5666-477b-9be7-d7e50a5286dc.png">
@@ -21,7 +21,7 @@
 <h1 align="center"/>ویزویز</h1>
 
 <p align="center">
-فروش آسان با <a href="https://github.com/wizwizdev/wizwizxui-timebot">ویزویز</a> نصب فقط با یک دستور
+فروش آسان با <a href="https://github.com/john6383027/wizwizxui-timebot">ویزویز</a> نصب فقط با یک دستور
 </p>
 
 <p align="center">
@@ -33,8 +33,8 @@
 
 [![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizch&color=blue)](https://telegram.dog/wizwizch)
 [![Telegram Group](https://img.shields.io/endpoint?color=neon&label=Support%20Group&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Fwizwizdev)](https://telegram.dog/wizwizdev)
-<img src="https://img.shields.io/github/license/wizwizdev/wizwizxui-timebot?style=flat-square" />
-<img src="https://img.shields.io/github/v/release/wizwizdev/wizwizxui-timebot.svg" />
+<img src="https://img.shields.io/github/license/john6383027/wizwizxui-timebot?style=flat-square" />
+<img src="https://img.shields.io/github/v/release/john6383027/wizwizxui-timebot.svg" />
 <!-- <img src="https://visitor-badge.glitch.me/badge?page_id=wizwizdev.wizwizdev" />
  -->
 </div>
@@ -42,7 +42,7 @@
 <br>
 <br>
     <a align="center">
-        <img src="https://github.com/wizwizdev/wizwizxui-timebot/assets/27927279/f6635ea5-ab26-4c64-a7b8-952203f79763" />
+        <img src="https://github.com/john6383027/wizwizxui-timebot/assets/27927279/f6635ea5-ab26-4c64-a7b8-952203f79763" />
     </a>     
 <br>
 <br>
@@ -61,7 +61,7 @@
 - قبل از نصب حتما ip سرور را روی دامنه تنظیم کنید 
 > دستور نصب را در کنسول وارد کرده و موارد مورد نیاز را برای تکمیل نصب وارد کنید.
 ```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/wizwiz.sh)
+bash <(curl -s https://raw.githubusercontent.com/john6383027/wizwizxui-timebot/main/wizwiz.sh)
 ```
 - در مرحله اول «sub.domain.com» یا «domain.com» را بدون https وارد کنید
 - ایمیل را وارد کنید
@@ -83,7 +83,7 @@ bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/mai
 
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/wizwizdev/wizwizxui-timebot/main/update.sh)
+bash <(curl -s https://raw.githubusercontent.com/john6383027/wizwizxui-timebot/main/update.sh)
 ```
 
 <br>
@@ -211,4 +211,4 @@ bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/wizwizdev/wizwizxui-timebot.svg)](https://starchart.cc/wizwizdev/wizwizxui-timebot)
+[![Stargazers over time](https://starchart.cc/john6383027/wizwizxui-timebot.svg)](https://starchart.cc/john6383027/wizwizxui-timebot)
