@@ -6529,7 +6529,7 @@ if(preg_match('/(addNewRahgozarPlan|addNewPlan|addNewMarzbanPlan)/',$userInfo['s
         $stmt->close();
 
         $keys = json_encode(['inline_keyboard'=>[
-            [['text'=>"🎖پورت اختصاصی",'callback_data'=>"withSpecificPort"]],
+//            [['text'=>"🎖پورت اختصاصی",'callback_data'=>"withSpecificPort"]],
             [['text'=>"🎗پورت اشتراکی",'callback_data'=>"withSharedPort"]]
             ]]);
         if($userInfo['step'] != "addNewMarzbanPlan") editText($message_id, "لطفا نوعیت پورت پنل رو انتخاب کنید", $keys);
