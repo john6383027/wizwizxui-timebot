@@ -87,14 +87,10 @@ $connection->query("CREATE TABLE `needed_sofwares` (
 )");
 
 $connection->query("INSERT INTO `needed_sofwares` (`id`, `title`, `link`, `status`) VALUES
-(1, 'ios fair-vpn', 'https://apps.apple.com/us/app/fair-vpn/id1533873488', 1),
-(2, 'ios napsternetv', 'https://apps.apple.com/us/app/napsternetv/id1629465476', 1),
-(3, 'ios oneclick', 'https://apps.apple.com/us/app/id1545555197', 1),
-(4, 'android v2rayng', 'https://play.google.com/store/apps/details?id=com.v2ray.ang&hl=en&gl=US', 1),
-(5, 'android sagernet', 'https://play.google.com/store/apps/details?id=io.nekohasekai.sagernet&hl=de&gl=US', 1),
-(6, 'android onclick', 'https://play.google.com/store/apps/details?id=earth.oneclick', 1),
-(7, 'windows v2rayng', 'https://google.com', 1),
-(8, 'mac fair', 'https://apps.apple.com/us/app/fair-vpn/id1533873488', 1);
+(1, 'Android - v2rayng', 'https://play.google.com/store/apps/details?id=com.v2ray.ang', 1),
+(2, 'ios - streisand', 'https://apps.apple.com/us/app/streisand/id6450534064', 1),
+(3, 'Windows - Linux', 'https://github.com/Matsuridayo/nekoray/releases', 1),
+(4, 'Mac - hiddify', 'https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532', 1),
 ");
 
 
