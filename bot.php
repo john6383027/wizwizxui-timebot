@@ -1788,9 +1788,6 @@ if(preg_match('/havePaiedWeSwap(.*)/',$data,$match)) {
 
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
-
-
 🌐 subscription : <code>$subLink</code>
         
         ";
@@ -3041,9 +3038,6 @@ if(preg_match('/payCustomWithWallet(.*)/',$data, $match)){
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
-
-
 🌐 subscription : <code>$subLink</code>"; 
     
         $file = RandomString() .".png";
@@ -3450,9 +3444,7 @@ if(preg_match('/accCustom(.*)/',$data, $match) and $text != $buttonValues['cance
 💝 config : <code>$vray_link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
-
-\n🌐 subscription : <code>$subLink</code>";
+🌐 subscription : <code>$subLink</code>";
     
         $file = RandomString() .".png";
         $ecc = 'L';
@@ -3774,8 +3766,6 @@ if(preg_match('/payWithWallet(.*)/',$data, $match)){
 " . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
-
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
 
 \n🌐 subscription : <code>$subLink</code>";
             
@@ -4305,8 +4295,6 @@ if(preg_match('/accept(.*)/',$data, $match) and $text != $buttonValues['cancel']
 " . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
-
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
 
 \n🌐 subscription : <code>$subLink</code>";
             
@@ -5772,9 +5760,7 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
-
-\n🌐 subscription : <code>$subLink</code>";
+🌐 subscription : <code>$subLink</code>";
     
         $file = RandomString().".png";
         $ecc = 'L'; 
@@ -6808,7 +6794,7 @@ if($data == 'backplan' and ($from_id == $admin || $userInfo['isAdmin'] == true))
     $keyboard[] = [['text'=>'➕ افزودن پلن اختصاصی و اشتراکی','callback_data'=>"addNewPlan"]];
     $keyboard[] = [
         ['text'=>'➕ افزودن پلن رهگذر','callback_data'=>"addNewRahgozarPlan"],
-        ['text'=>"افزودن پلن مرزبان",'callback_data'=>"addNewMarzbanPlan"]
+        ['text'=>"افزودن پلن مولتی لوکیشن",'callback_data'=>"addNewMarzbanPlan"]
                     ];
     $keyboard[] = [['text'=>'➕ افزودن پلن حجمی','callback_data'=>"volumePlanSettings"],['text'=>'➕ افزودن پلن زمانی','callback_data'=>"dayPlanSettings"]];
     $keyboard[] = [['text' => "➕ افزودن پلن دلخواه", 'callback_data' => "editCustomPlan"]];
