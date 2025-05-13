@@ -5772,8 +5772,6 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
 💝 config : <code>$link</code>":"");
         if($botState['subLinkState'] == "on") $acc_text .= "
 
-🔋 Volume web: <code> $botUrl"."search.php?id=".$uniqid."</code>
-
 \n🌐 subscription : <code>$subLink</code>";
 
         $file = RandomString().".png";
