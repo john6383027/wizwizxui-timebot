@@ -3444,7 +3444,7 @@ if(preg_match('/accCustom(.*)/',$data, $match) and $text != $buttonValues['cance
 💝 config : <code>$vray_link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🌐 subscription : <code>$subLink</code>";
+\n🌐 subscription : <code>$subLink</code>";
     
         $file = RandomString() .".png";
         $ecc = 'L';
@@ -5760,7 +5760,7 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
 💝 config : <code>$link</code>":"");
 if($botState['subLinkState'] == "on") $acc_text .= "
 
-🌐 subscription : <code>$subLink</code>";
+\n🌐 subscription : <code>$subLink</code>";
     
         $file = RandomString().".png";
         $ecc = 'L'; 
