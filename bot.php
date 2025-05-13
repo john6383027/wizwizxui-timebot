@@ -5771,7 +5771,6 @@ if(preg_match('/freeTrial(\d+)_(?<buyType>\w+)/',$data,$match)) {
 " . ($botState['configLinkState'] != "off" && $serverType != "marzban"?"
 💝 config : <code>$link</code>":"");
         if($botState['subLinkState'] == "on") $acc_text .= "
-
 \n🌐 subscription : <code>$subLink</code>";
 
         $file = RandomString().".png";
