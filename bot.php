@@ -1779,7 +1779,6 @@ if (preg_match('/havePaiedWeSwap(.*)/', $data, $match)) {
 
                         if ($botState['subLinkState'] == "on") $acc_text .= "
 
-
 🌐 subscription : <code>$subLink</code>
         
         ";
@@ -3027,7 +3026,6 @@ if (preg_match('/payCustomWithWallet(.*)/', $data, $match)) {
 💝 config : <code>$link</code>" : "");
         if ($botState['subLinkState'] == "on") $acc_text .= "
 
-
 🌐 subscription : <code>$subLink2</code>";
 
         $file = RandomString() . ".png";
@@ -3439,7 +3437,6 @@ if (preg_match('/accCustom(.*)/', $data, $match) and $text != $buttonValues['can
 " . ($botState['configLinkState'] != "off" && $serverType != "marzban" ? "
 💝 config : <code>$vray_link</code>" : "");
         if ($botState['subLinkState'] == "on") $acc_text .= "
-
 
 \n🌐 subscription : <code>$subLink</code>";
 
